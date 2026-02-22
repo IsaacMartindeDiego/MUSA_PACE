@@ -1,0 +1,257 @@
+---
+title: "Preguntas abiertas"
+format: html
+---
+
+## Preguntas abiertas y extensiones del análisis
+
+Hasta este punto el análisis se ha centrado en una carrera individual, tratando de capturar dos dimensiones complementarias:
+
+- **Pacing interno**: cómo distribuye cada atleta su esfuerzo a lo largo de la carrera.
+- **Dinámica competitiva**: cómo evoluciona la separación respecto a la cabeza de carrera.
+
+Este enfoque permite describir y agrupar patrones estratégicos dentro de una prueba concreta. Sin embargo, una carrera es solo una observación dentro de un proceso competitivo más amplio. Cuando se dispone de múltiples pruebas a lo largo del tiempo, con corredores que se repiten y rivales que cambian, el problema se vuelve necesariamente **longitudinal** e **interactivo**.
+
+La pregunta deja de ser únicamente:
+
+> ¿Qué patrón explica esta carrera?
+
+y pasa a ser:
+
+> ¿Qué patrón caracteriza a un atleta a lo largo del tiempo?  
+> ¿Cambia ese patrón o permanece inalterado?
+> ¿Qué tipo de carrera favorece determinados perfiles?  
+> ¿Cómo interactúan los estilos entre sí y con el contexto competitivo?
+
+En este capítulo se recogen preguntas abiertas y, especialmente, una propuesta práctica para extender el análisis a **múltiples carreras** mediante **etiquetado automático de pruebas**. La idea, que aquí dejamos abierta como posibilidad de trabajo futuro, es pasar de “etiquetar corredores” a “etiquetar carreras” y estudiar relaciones entre resultados, estilos individuales y composición del campo de rivales.
+
+---
+
+##  Del análisis puntual al análisis longitudinal
+
+Si analizamos varias carreras donde:
+
+- se repiten corredores,
+- cambian rivales,
+- cambia el contexto (ritmo alto, carrera táctica, final cerrado, ruptura temprana, etc.),
+
+podemos estudiar dimensiones que no aparecen en una sola prueba:
+
+- **Estabilidad estratégica**: si un atleta mantiene su patrón o cambia según contexto.
+- **Tipologías de carrera**: si existen “arquetipos” de prueba con estructuras repetibles.
+- **Interacciones**: si el rendimiento depende del perfil del atleta *y* del tipo de rivales/carrera.
+
+Esto abre líneas de trabajo interesantes:
+
+- Matrices de transición de etiquetas por atleta (qué perfiles son “estables” vs “adaptativos”).
+- Modelos con interacción `perfil_atleta × tipo_carrera`.
+- Predicción: dado el grupo de atletas en línea de salida (estilos presentes), ¿se puede anticipar la estructura probable de la carrera?
+
+---
+
+## Etiquetar carreras automáticamente
+
+Una forma natural de extender el análisis es construir, para cada carrera, un conjunto de **métricas agregadas** (un “vector de características”) y usarlo para:
+
+1) Definir etiquetas mediante reglas interpretables (heurísticas basadas en percentiles).  
+2) Agrupar carreras automáticamente con clustering (igual que se ha hecho con corredores).  
+3) Relacionar el tipo de carrera con el resultado de atletas concretos y con la composición del campo.
+
+El objetivo no es solo clasificar carreras, sino responder preguntas como:
+
+- ¿Qué perfiles de atleta rinden mejor en carreras con *kick* colectivo?
+- ¿Un corredor con “kick final fuerte” obtiene más podios cuando la carrera es táctica?
+- ¿Cambian los resultados de un atleta según el tipo de rivales presentes?
+
+A continuación se proponen métricas concretas para etiquetar carreras con los datos disponibles (splits cada 100m y series derivadas como `gap`).
+
+---
+
+##  Métricas propuestas para etiquetar carreras
+
+###  Ritmo global de la carrera (nivel absoluto)
+
+Estas métricas distinguen entre pruebas “rápidas” y pruebas más tácticas (lentas o irregulares), y cuantifican la competitividad general del campo.
+
+- **Tiempo ganador** (`T_win`): tiempo final del atleta con `Place = 1`.
+- **Tiempo medio / mediana** (`T_mean`, `T_med`): resumen del nivel del grupo.
+- **Densidad del campo**:
+  - `IQR_Time` (Q3–Q1 del tiempo final).
+  - `Range_Time` (máx–mín del tiempo final).
+- **Asimetría por mitades** (si se reconstruyen acumulados):
+  - diferencia entre primera mitad y segunda mitad (a nivel de carrera o porcentaje de corredores con “negative split”).
+
+**Interpretación**: 
+
+- carreras rápidas suelen tener `T_win` bajo y, en ciertos contextos, un campo más selectivo (mayor dispersión final). 
+- carreras tácticas pueden concentrar tiempos y depender más del final.
+
+**Nota**: aquí no se tienen en cuenta variables de dispersión, pero deberían considerarse.
+
+---
+
+### Forma del pacing agregado (cómo se corre la prueba)
+
+Aquí interesa la *estructura temporal* del ritmo: si la carrera acelera, desacelera o presenta un cambio brusco.
+
+A partir de splits incrementales (tiempo por 100m):
+
+- **Perfil medio de splits** (vector de 15 valores): `mean_split_100`…`mean_split_1500`.
+- **Pendiente del ritmo (inicio → final)**:
+  - `slope_mean = mean(últimos 500m) - mean(primeros 500m)`.
+- **Kick colectivo**:
+  - `kick_group = mean(últimos 300m) - mean(parte central, p.ej. 600–900m)`.
+- **Variabilidad del ritmo de la carrera**:
+  - `sd_mean_profile`: desviación estándar del perfil medio.
+  - `mean_within_runner_sd`: promedio de la variabilidad individual (mide “caos” interno del grupo).
+- **Momento del cambio principal**:
+  - dónde ocurre el descenso más fuerte del split: `argmin(Δsplit)` sobre el perfil medio.
+
+**Interpretación**:
+
+- `kick_group` alto sugiere una carrera resuelta en el tramo final.
+- Pendiente positiva (últimos tramos más lentos) puede indicar desgaste o falta de ataque final.
+- Variabilidad alta sugiere carrera con cambios frecuentes de ritmo.
+
+---
+
+### Dinámica competitiva (gap): estructura del grupo y rupturas
+
+Estas métricas describen cómo evoluciona la separación del pelotón respecto a la cabeza.
+
+A partir de series `gap_time_sec` o `gap_m` por corredor y distancia:
+
+- **Separación del campo en puntos clave**:
+  - `spread_800 = IQR(gap_time_sec en 800m)`
+  - `spread_1200 = IQR(gap_time_sec en 1200m)`
+  - `spread_finish = IQR(gap_time_sec en 1500m)`
+- **Momento de ruptura (breakpoint)**:
+  - primera distancia donde el *spread* supera un umbral relativo (autoajustado), por ejemplo:
+    - `spread_d > mediana(spread_temprano) + c · MAD(spread_temprano)`
+- **Final apretado**:
+  - `n_close_finish = nº corredores con gap_time_sec <= 1s` (o <= 2s) al final.
+- **Agresividad de ataques** (aproximación con datos discretos):
+  - magnitud máxima de recorte en 100m (para cada corredor, el mínimo de `Δgap`), y luego agregados: media o percentiles.
+
+**Interpretación**:
+
+- Ruptura temprana + spread alto: carrera selectiva.
+- Spread bajo hasta tarde + kick: carrera táctica con final decisivo.
+- Muchos corredores dentro de 1–2s: carrera “compacta”.
+
+---
+
+### Métricas basadas en etiquetas de corredor (composición del pelotón)
+
+Una carrera puede caracterizarse por la **mezcla de estilos** presentes, si disponemos de etiquetas individuales:
+
+- **Distribución de estilos**:
+  - proporción de corredores en cada etiqueta (pacing o gap).
+- **Entropía de estilos** (diversidad estratégica):
+   $$ H = -\sum p_i \log(p_i) $$
+- **Dominancia**:
+  - `max(p_i)` (si un estilo domina el campo).
+- **Índice de “choque estratégico”** (opcional):
+  - proporción de combinaciones opuestas: p.ej. “salida rápida” + “kickers”.
+
+**Interpretación**:
+
+- Un campo estratégico homogéneo puede inducir carreras más previsibles.
+- Un campo heterogéneo puede inducir dinámica más caótica o rupturas.
+
+---
+
+## Etiquetado autoajustado (sin umbrales fijos)
+
+Para evitar reglas que dependan del nivel absoluto de una carrera concreta, es preferible:
+
+- usar **percentiles dentro de la propia carrera**,
+- o estandarización robusta por carrera (`(x - mediana)/MAD`),
+- o reglas relativas (“top 25%”) en vez de valores fijos.
+
+Ejemplos de reglas autoajustadas:
+
+- *Carrera con kick colectivo*: `kick_group` en el cuartil superior de esa carrera.
+- *Ruptura temprana*: `breakpoint` ocurre antes que el percentil 25 de distancias de ruptura.
+- *Carrera compacta*: `spread_finish` en el cuartil inferior y `n_close_finish` alto.
+
+Ventaja: el criterio se adapta a cambios de época, nivel del meeting o condiciones externas.
+
+---
+
+## Propuesta de taxonomía de carreras (etiquetas finales)
+
+A partir de las métricas anteriores se pueden definir categorías interpretables. Por ejemplo:
+
+1. **Rápida desde el inicio**
+   - `T_win` bajo, `slope_mean` pequeño, spreads moderados.
+2. **Táctica con kick final**
+   - `kick_group` alto, spreads bajos hasta tarde y aumento final.
+3. **De desgaste / ruptura temprana**
+   - `breakpoint` temprano, `spread_800` alto, dispersión creciente.
+4. **Compacta hasta meta**
+   - `spread_finish` bajo, `n_close_finish` alto.
+5. **Caótica / variable**
+   - variabilidad alta del perfil medio y alta variabilidad individual.
+
+Estas etiquetas pueden definirse por reglas autoajustadas o, alternativamente, mediante clustering de carreras.
+
+---
+
+## Pipeline recomendado: de carreras a un dataset analizable
+
+Una implementación práctica consistiría en:
+
+1) Para cada carrera (cada CSV):
+- Calcular métricas de ritmo global, pacing agregado, dinámica gap y composición (si hay etiquetas individuales).
+- Guardar una fila por carrera con todas las métricas.
+
+2) Unir todas las carreras en un dataset longitudinal:
+
+| RaceID | Fecha | Meeting | T_win | IQR_Time | kick_group | spread_800 | breakpoint | ... |
+
+3) Etiquetar carreras:
+- Por reglas (percentiles) o clustering jerárquico.
+
+4) Analizar interacción atleta–carrera:
+- `resultado ~ tipo_carrera + perfil_atleta + interacción`
+- Estudio de estabilidad de etiquetas por atleta en el tiempo.
+
+---
+
+## Preguntas abiertas (para investigación futura)
+
+### Estabilidad individual
+- ¿Qué porcentaje de corredores mantiene su etiqueta de pacing a lo largo del tiempo?
+- ¿Los atletas “adaptativos” (que cambian de etiqueta) obtienen mejores resultados?
+
+### Tipologías de carrera
+- ¿Existen arquetipos de carrera reproducibles entre competiciones distintas?
+- ¿El tipo de carrera depende más del meeting/condiciones o de la composición de la lista de salida?
+
+### Interacciones y contexto
+- ¿Qué perfiles rinden mejor en carreras con kick colectivo?
+- ¿Los resultados de un atleta dependen del tipo de rivales presentes (mezcla estratégica)?
+- ¿Hay combinaciones de estilos que generan sistemáticamente rupturas tempranas?
+
+### Predicción
+- ¿Se puede anticipar el tipo de carrera antes de correrla con solo saber los perfiles inscritos?
+- ¿Mejora la predicción de podio si se incorporan interacción `perfil × tipo_carrera`?
+
+### Explicación del rendimiento
+- ¿Qué explica mejor la posición final a largo plazo: el pacing interno o la dinámica competitiva?
+- ¿Hay carreras en las que el pacing interno es secundario frente a la táctica colectiva?
+
+---
+
+## Nota final
+
+Este paso (pasar de una carrera a muchas) obliga a tratar la estrategia como un fenómeno:
+
+- **longitudinal** (cambia con el tiempo),
+- **interactivo** (depende de rivales),
+- **contextual** (depende del tipo de carrera).
+
+Por tanto, el objetivo no es solo clasificar, sino entender qué se mantiene, qué varía y qué condiciones favorecen a cada perfil competitivo.
+
+---

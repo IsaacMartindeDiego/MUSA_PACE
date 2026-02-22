@@ -1,0 +1,38 @@
+project:
+  title: "Análisis carreras 1500m"
+  type: book
+  resources: 
+    - images/musa.png
+
+book:
+  title: "Análisis carreras 1500m"
+  author: "Isaac Martín"
+  date: "2026-02-21"
+
+  sidebar:
+    style: "docked"
+    search: true
+
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - gap.qmd
+    - fusion.qmd
+    - next.qmd
+
+lang: es
+
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    theme: cosmo
+    css: styles.css
+    include-after-body: sidebar-logo.html
+    
+execute:
+  echo: true
+  warning: false
+  message: false
+

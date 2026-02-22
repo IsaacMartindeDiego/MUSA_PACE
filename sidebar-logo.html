@@ -1,0 +1,22 @@
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Sidebar (Quarto book)
+  const sidebar = document.querySelector(".sidebar");
+  if (!sidebar) return;
+
+  // Evitar duplicados si Quarto rehidrata
+  if (document.getElementById("sidebar-logo")) return;
+
+  const div = document.createElement("div");
+  div.id = "sidebar-logo";
+  div.innerHTML = `
+    <a href="./index.html" aria-label="Inicio">
+      <img src="/images/musa.png" alt="Logo Máster" />
+    </a>
+  `;
+
+  // Insertar arriba del todo del sidebar
+  sidebar.prepend(div);
+});
+</script>
+

@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>2&nbsp; Análisis velocidad – Análisis carreras 1500m</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./gap.html" rel="next">
+<link href="./index.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Análisis velocidad</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Análisis carreras 1500m</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Análisis velocidad</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./gap.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Análisis Gap</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./fusion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Fusión</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./next.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Preguntas abiertas</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#objetivo-y-datos" id="toc-objetivo-y-datos" class="nav-link active" data-scroll-target="#objetivo-y-datos"><span class="header-section-number">2.1</span> Objetivo y datos</a></li>
+  <li><a href="#lectura-del-csv" id="toc-lectura-del-csv" class="nav-link" data-scroll-target="#lectura-del-csv"><span class="header-section-number">2.2</span> Lectura del CSV</a></li>
+  <li><a href="#visualización" id="toc-visualización" class="nav-link" data-scroll-target="#visualización"><span class="header-section-number">2.3</span> Visualización</a></li>
+  <li><a href="#selección-de-splits-y-construcción-de-la-matriz-x" id="toc-selección-de-splits-y-construcción-de-la-matriz-x" class="nav-link" data-scroll-target="#selección-de-splits-y-construcción-de-la-matriz-x"><span class="header-section-number">2.4</span> Selección de splits y construcción de la matriz X</a>
+  <ul class="collapse">
+  <li><a href="#manejo-simple-de-valores-faltantes-na" id="toc-manejo-simple-de-valores-faltantes-na" class="nav-link" data-scroll-target="#manejo-simple-de-valores-faltantes-na"><span class="header-section-number">2.4.1</span> Manejo simple de valores faltantes (NA)</a></li>
+  </ul></li>
+  <li><a href="#distancias-entre-corredores-tres-enfoques" id="toc-distancias-entre-corredores-tres-enfoques" class="nav-link" data-scroll-target="#distancias-entre-corredores-tres-enfoques"><span class="header-section-number">2.5</span> Distancias entre corredores: tres enfoques</a>
+  <ul class="collapse">
+  <li><a href="#euclídea-sobre-splits-tal-cual" id="toc-euclídea-sobre-splits-tal-cual" class="nav-link" data-scroll-target="#euclídea-sobre-splits-tal-cual"><span class="header-section-number">2.5.1</span> Euclídea sobre splits “tal cual”</a></li>
+  <li><a href="#distancia-por-forma-de-pacing-z-score-por-corredor" id="toc-distancia-por-forma-de-pacing-z-score-por-corredor" class="nav-link" data-scroll-target="#distancia-por-forma-de-pacing-z-score-por-corredor"><span class="header-section-number">2.5.2</span> Distancia por “forma de pacing” (z-score por corredor)</a></li>
+  <li><a href="#distancia-basada-en-correlación-perfiles" id="toc-distancia-basada-en-correlación-perfiles" class="nav-link" data-scroll-target="#distancia-basada-en-correlación-perfiles"><span class="header-section-number">2.5.3</span> Distancia basada en correlación (perfiles)</a></li>
+  </ul></li>
+  <li><a href="#clustering-por-estrategia-pacing" id="toc-clustering-por-estrategia-pacing" class="nav-link" data-scroll-target="#clustering-por-estrategia-pacing"><span class="header-section-number">2.6</span> Clustering por estrategia (pacing)</a>
+  <ul class="collapse">
+  <li><a href="#elección-del-número-de-clusters-con-silhouette" id="toc-elección-del-número-de-clusters-con-silhouette" class="nav-link" data-scroll-target="#elección-del-número-de-clusters-con-silhouette"><span class="header-section-number">2.6.1</span> Elección del número de clusters con silhouette</a></li>
+  <li><a href="#dendrograma" id="toc-dendrograma" class="nav-link" data-scroll-target="#dendrograma"><span class="header-section-number">2.6.2</span> Dendrograma</a></li>
+  <li><a href="#representación" id="toc-representación" class="nav-link" data-scroll-target="#representación"><span class="header-section-number">2.6.3</span> Representación</a></li>
+  <li><a href="#tabla-corredor-cluster" id="toc-tabla-corredor-cluster" class="nav-link" data-scroll-target="#tabla-corredor-cluster"><span class="header-section-number">2.6.4</span> Tabla corredor → cluster</a></li>
+  </ul></li>
+  <li><a href="#interpretación-perfil-medio-por-cluster" id="toc-interpretación-perfil-medio-por-cluster" class="nav-link" data-scroll-target="#interpretación-perfil-medio-por-cluster"><span class="header-section-number">2.7</span> Interpretación: perfil medio por cluster</a>
+  <ul class="collapse">
+  <li><a href="#gráfico-perfil-medio-por-cluster" id="toc-gráfico-perfil-medio-por-cluster" class="nav-link" data-scroll-target="#gráfico-perfil-medio-por-cluster"><span class="header-section-number">2.7.1</span> Gráfico: perfil medio por cluster</a></li>
+  </ul></li>
+  <li><a href="#heatmap-de-xshape-perfiles-normalizados" id="toc-heatmap-de-xshape-perfiles-normalizados" class="nav-link" data-scroll-target="#heatmap-de-xshape-perfiles-normalizados"><span class="header-section-number">2.8</span> Heatmap de Xshape (perfiles normalizados)</a></li>
+  <li><a href="#etiquetado-automático-de-estrategias" id="toc-etiquetado-automático-de-estrategias" class="nav-link" data-scroll-target="#etiquetado-automático-de-estrategias"><span class="header-section-number">2.9</span> Etiquetado automático de estrategias</a>
+  <ul class="collapse">
+  <li><a href="#métricas-de-estrategia" id="toc-métricas-de-estrategia" class="nav-link" data-scroll-target="#métricas-de-estrategia"><span class="header-section-number">2.9.1</span> Métricas de estrategia</a></li>
+  <li><a href="#reglas-de-decisión-heurísticas" id="toc-reglas-de-decisión-heurísticas" class="nav-link" data-scroll-target="#reglas-de-decisión-heurísticas"><span class="header-section-number">2.9.2</span> Reglas de decisión (heurísticas)</a></li>
+  <li><a href="#resumen-etiquetas-por-cluster" id="toc-resumen-etiquetas-por-cluster" class="nav-link" data-scroll-target="#resumen-etiquetas-por-cluster"><span class="header-section-number">2.9.3</span> Resumen: etiquetas por cluster</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Análisis velocidad</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="objetivo-y-datos" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="objetivo-y-datos"><span class="header-section-number">2.1</span> Objetivo y datos</h2>
+<p>En este documento vamos a:</p>
+<ul>
+<li>Leer un CSV con resultados de una carrera de 1500m.</li>
+<li>Extraer los <em>splits</em> cada 100m (columnas <code>100m</code>, <code>200m</code>, …, <code>1500m</code>).</li>
+<li>Construir representaciones comparables entre corredores.</li>
+<li>Agrupar corredores por <strong>estrategia</strong> (forma del pacing) con clustering jerárquico.</li>
+<li>Resumir e interpretar cada grupo y <strong>etiquetar automáticamente</strong> estrategias.</li>
+</ul>
+<p>La idea clave es separar dos conceptos:</p>
+<ul>
+<li><strong>Nivel de rendimiento</strong>: quién es más rápido en términos absolutos.</li>
+<li><strong>Estrategia (pacing)</strong>: cómo distribuye el esfuerzo a lo largo de la carrera (salida fuerte, ritmo constante, kick final, etc.).</li>
+</ul>
+<p>Para agrupar por estrategia, compararemos <strong>la forma del perfil</strong>, no el tiempo absoluto.</p>
+</section>
+<section id="lectura-del-csv" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="lectura-del-csv"><span class="header-section-number">2.2</span> Lectura del CSV</h2>
+</section>
+<section id="visualización" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="visualización"><span class="header-section-number">2.3</span> Visualización</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>split_cols <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">"^</span><span class="sc">\\</span><span class="st">d+m$"</span>, <span class="fu">names</span>(datos), <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Top 3 según la clasificación (Place 1,2,3)</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>top3 <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Place) <span class="sc">%&gt;%</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(Competitor)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>splits_long <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Place, Competitor, <span class="fu">all_of</span>(split_cols)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">all_of</span>(split_cols),</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">"split"</span>,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"split_time"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">dist_m =</span> <span class="fu">as.integer</span>(<span class="fu">sub</span>(<span class="st">"m$"</span>, <span class="st">""</span>, split)),</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">highlight =</span> <span class="fu">if_else</span>(Competitor <span class="sc">%in%</span> top3, Competitor, <span class="st">"Otros"</span>)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Competitor, dist_m)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(splits_long,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> dist_m, <span class="at">y =</span> split_time, <span class="at">group =</span> Competitor, <span class="at">color =</span> highlight)) <span class="sc">+</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.8</span>, <span class="at">alpha =</span> <span class="fl">0.75</span>) <span class="sc">+</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.3</span>, <span class="at">alpha =</span> <span class="fl">0.75</span>) <span class="sc">+</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Otros"</span> <span class="ot">=</span> <span class="st">"grey70"</span>,</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>               <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="st">"#1b9e77"</span>, <span class="st">"#d95f02"</span>, <span class="st">"#7570b3"</span>), top3))</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Splits (tiempo por 100m) por corredor — Top 3 resaltado"</span>,</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Colores: top-3 por posición final. Resto en gris."</span>,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Distancia (m)"</span>,</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Tiempo del split (s)"</span>,</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">""</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>) <span class="sc">+</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="intro_files/figure-html/visualiza-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Con el tiempo acumulado</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>splits_long_cum <span class="ot">&lt;-</span> splits_long <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Competitor) <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cum_time =</span> <span class="fu">cumsum</span>(split_time)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(splits_long_cum, <span class="fu">aes</span>(<span class="at">x =</span> dist_m, <span class="at">y =</span> cum_time, <span class="at">group =</span> Competitor)) <span class="sc">+</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Tiempo acumulado por corredor (cada 100m)"</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Curvas más bajas = corredores más rápidos en cada punto"</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Distancia (m)"</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Tiempo acumulado (s)"</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="intro_files/figure-html/tiempo_acumulado-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="selección-de-splits-y-construcción-de-la-matriz-x" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="selección-de-splits-y-construcción-de-la-matriz-x"><span class="header-section-number">2.4</span> Selección de splits y construcción de la matriz X</h2>
+<p>Los splits aparecen como columnas 100m, 200m, … 1500m. Los capturamos con una expresión regular: columnas que son “número + m”.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>split_cols <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">"^</span><span class="sc">\\</span><span class="st">d+m$"</span>, <span class="fu">names</span>(datos), <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>split_cols</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "100m"  "200m"  "300m"  "400m"  "500m"  "600m"  "700m"  "800m"  "900m" 
+[10] "1000m" "1100m" "1200m" "1300m" "1400m" "1500m"</code></pre>
+</div>
+</div>
+<p>Construimos una matriz numérica X:</p>
+<ul>
+<li><p>Filas: corredores</p></li>
+<li><p>Columnas: splits (cada 100m)</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(split_cols)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>()</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(X)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 12 15</code></pre>
+</div>
+</div>
+<section id="manejo-simple-de-valores-faltantes-na" class="level3" data-number="2.4.1">
+<h3 data-number="2.4.1" class="anchored" data-anchor-id="manejo-simple-de-valores-faltantes-na"><span class="header-section-number">2.4.1</span> Manejo simple de valores faltantes (NA)</h3>
+<p>dist() no maneja bien NA. Si existieran, usamos una imputación muy simple: reemplazamos cada NA por la media de su columna (tramo).</p>
+<p>Esto no es “la verdad”, pero evita que el cálculo falle y suele ser aceptable si hay pocos NA.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">anyNA</span>(X)) {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  col_means <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(X, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="fu">seq_len</span>(<span class="fu">ncol</span>(X))) {</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    X[<span class="fu">is.na</span>(X[, j]), j] <span class="ot">&lt;-</span> col_means[j]</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">anyNA</span>(X)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="distancias-entre-corredores-tres-enfoques" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="distancias-entre-corredores-tres-enfoques"><span class="header-section-number">2.5</span> Distancias entre corredores: tres enfoques</h2>
+<section id="euclídea-sobre-splits-tal-cual" class="level3" data-number="2.5.1">
+<h3 data-number="2.5.1" class="anchored" data-anchor-id="euclídea-sobre-splits-tal-cual"><span class="header-section-number">2.5.1</span> Euclídea sobre splits “tal cual”</h3>
+<p>Esta distancia mezcla velocidad absoluta + forma del pacing.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>D <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">dist</span>(X, <span class="at">method =</span> <span class="st">"euclidean"</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(D) <span class="ot">&lt;-</span> datos<span class="sc">$</span>Competitor</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(D) <span class="ot">&lt;-</span> datos<span class="sc">$</span>Competitor</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>D[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    Faith Kipyegon Jessica Hull Georgia Hunter Bell
+Faith Kipyegon           0.0000000    1.0816654           0.8831761
+Jessica Hull             1.0816654    0.0000000           0.8185353
+Georgia Hunter Bell      0.8831761    0.8185353           0.0000000
+Diribe Welteji           1.1704700    0.8831761           0.7280110
+Laura Muir               1.7406895    1.3928388           1.2845233
+                    Diribe Welteji Laura Muir
+Faith Kipyegon           1.1704700   1.740690
+Jessica Hull             0.8831761   1.392839
+Georgia Hunter Bell      0.7280110   1.284523
+Diribe Welteji           0.0000000   1.421267
+Laura Muir               1.4212670   0.000000</code></pre>
+</div>
+</div>
+</section>
+<section id="distancia-por-forma-de-pacing-z-score-por-corredor" class="level3" data-number="2.5.2">
+<h3 data-number="2.5.2" class="anchored" data-anchor-id="distancia-por-forma-de-pacing-z-score-por-corredor"><span class="header-section-number">2.5.2</span> Distancia por “forma de pacing” (z-score por corredor)</h3>
+<p>Para estudiar estrategia, queremos ignorar que uno sea globalmente más rápido que otro y fijarnos en el patrón relativo (salida / ritmo / kick).</p>
+<p>Para eso, estandarizamos cada fila (cada corredor):</p>
+<p>Restar la media de sus splits</p>
+<p>Dividir por su desviación estándar</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>row_z <span class="ot">&lt;-</span> <span class="cf">function</span>(v) {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> <span class="fu">sd</span>(v, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.na</span>(s) <span class="sc">||</span> s <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(v)))</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  (v <span class="sc">-</span> <span class="fu">mean</span>(v, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> s</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>Xshape <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">apply</span>(X, <span class="dv">1</span>, row_z))</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(Xshape) <span class="ot">&lt;-</span> split_cols</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(Xshape) <span class="ot">&lt;-</span> datos<span class="sc">$</span>Competitor</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>D_shape <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">dist</span>(Xshape, <span class="at">method =</span> <span class="st">"euclidean"</span>))</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>D_shape[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    Faith Kipyegon Jessica Hull Georgia Hunter Bell
+Faith Kipyegon           0.0000000     1.554367           0.9887085
+Jessica Hull             1.5543670     0.000000           1.3408311
+Georgia Hunter Bell      0.9887085     1.340831           0.0000000
+Diribe Welteji           1.6756664     1.458116           1.2081597
+Laura Muir               2.5417275     2.343352           2.5492824
+                    Diribe Welteji Laura Muir
+Faith Kipyegon            1.675666   2.541727
+Jessica Hull              1.458116   2.343352
+Georgia Hunter Bell       1.208160   2.549282
+Diribe Welteji            0.000000   2.487792
+Laura Muir                2.487792   0.000000</code></pre>
+</div>
+</div>
+</section>
+<section id="distancia-basada-en-correlación-perfiles" class="level3" data-number="2.5.3">
+<h3 data-number="2.5.3" class="anchored" data-anchor-id="distancia-basada-en-correlación-perfiles"><span class="header-section-number">2.5.3</span> Distancia basada en correlación (perfiles)</h3>
+<p>Si dos perfiles tienen la misma forma aunque uno sea más rápido, su correlación será alta. Definimos distancia como 1 - correlación.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>D_cor <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">as.dist</span>(<span class="dv">1</span> <span class="sc">-</span> <span class="fu">cor</span>(<span class="fu">t</span>(X), <span class="at">use =</span> <span class="st">"pairwise.complete.obs"</span>)))</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(D_cor) <span class="ot">&lt;-</span> datos<span class="sc">$</span>Competitor</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(D_cor) <span class="ot">&lt;-</span> datos<span class="sc">$</span>Competitor</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>D_cor[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    Faith Kipyegon Jessica Hull Georgia Hunter Bell
+Faith Kipyegon          0.00000000   0.08628774          0.03491230
+Jessica Hull            0.08628774   0.00000000          0.06420815
+Georgia Hunter Bell     0.03491230   0.06420815          0.00000000
+Diribe Welteji          0.10028064   0.07593217          0.05213035
+Laura Muir              0.23072781   0.19611779          0.23210146
+                    Diribe Welteji Laura Muir
+Faith Kipyegon          0.10028064  0.2307278
+Jessica Hull            0.07593217  0.1961178
+Georgia Hunter Bell     0.05213035  0.2321015
+Diribe Welteji          0.00000000  0.2210396
+Laura Muir              0.22103957  0.0000000</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="clustering-por-estrategia-pacing" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="clustering-por-estrategia-pacing"><span class="header-section-number">2.6</span> Clustering por estrategia (pacing)</h2>
+<p>Aquí usamos Xshape (perfil normalizado por corredor), que es la representación más alineada con “estrategia”.</p>
+<section id="clustering-jerárquico-ward" class="level4" data-number="2.6.0.1">
+<h4 data-number="2.6.0.1" class="anchored" data-anchor-id="clustering-jerárquico-ward"><span class="header-section-number">2.6.0.1</span> Clustering jerárquico (Ward)</h4>
+<p>Calculamos distancias euclídeas entre perfiles normalizados.</p>
+<p>Aplicamos hclust con método ward.D2.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">dist</span>(Xshape, <span class="at">method =</span> <span class="st">"euclidean"</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>hc <span class="ot">&lt;-</span> <span class="fu">hclust</span>(d, <span class="at">method =</span> <span class="st">"ward.D2"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="elección-del-número-de-clusters-con-silhouette" class="level3" data-number="2.6.1">
+<h3 data-number="2.6.1" class="anchored" data-anchor-id="elección-del-número-de-clusters-con-silhouette"><span class="header-section-number">2.6.1</span> Elección del número de clusters con silhouette</h3>
+<p>Probamos k = 2..8 y elegimos el que maximiza la silhouette media.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cluster)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>k_grid <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">8</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>sil <span class="ot">&lt;-</span> <span class="fu">sapply</span>(k_grid, <span class="cf">function</span>(k) {</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  cl <span class="ot">&lt;-</span> <span class="fu">cutree</span>(hc, <span class="at">k =</span> k)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>(<span class="fu">silhouette</span>(cl, d)[, <span class="dv">3</span>])</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>k_best <span class="ot">&lt;-</span> k_grid[<span class="fu">which.max</span>(sil)]</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>k_best</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(k_grid, sil, <span class="at">type =</span> <span class="st">"b"</span>,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"k (número de clusters)"</span>, <span class="at">ylab =</span> <span class="st">"Silhouette media"</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Selección de k por silhouette"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="intro_files/figure-html/shil-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Si quieres forzar un valor (p.ej. porque te interesa interpretabilidad), puedes hacerlo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>k_best <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>clusters <span class="ot">&lt;-</span> <span class="fu">cutree</span>(hc, <span class="at">k =</span> k_best)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(clusters)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>clusters
+1 2 3 
+5 5 2 </code></pre>
+</div>
+</div>
+</section>
+<section id="dendrograma" class="level3" data-number="2.6.2">
+<h3 data-number="2.6.2" class="anchored" data-anchor-id="dendrograma"><span class="header-section-number">2.6.2</span> Dendrograma</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hc, <span class="at">labels =</span> datos<span class="sc">$</span>Competitor,</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Clustering por estrategia (pacing) - Ward.D2"</span>,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">""</span>, <span class="at">sub =</span> <span class="st">""</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rect.hclust</span>(hc, <span class="at">k =</span> k_best, <span class="at">border =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">6</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="intro_files/figure-html/plor_dendrograma-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="representación" class="level3" data-number="2.6.3">
+<h3 data-number="2.6.3" class="anchored" data-anchor-id="representación"><span class="header-section-number">2.6.3</span> Representación</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Pasar Xshape a formato largo con cluster</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>Xshape_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(Xshape)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>Xshape_df<span class="sc">$</span>Competitor <span class="ot">&lt;-</span> <span class="fu">rownames</span>(Xshape_df)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>Xshape_df<span class="sc">$</span>cluster <span class="ot">&lt;-</span> <span class="fu">factor</span>(clusters)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>Xshape_long <span class="ot">&lt;-</span> Xshape_df <span class="sc">%&gt;%</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">all_of</span>(split_cols),</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">"split"</span>,</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"z"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dist_m =</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">"m"</span>, <span class="st">""</span>, split)))</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co"># (Opcional) media por cluster para dibujar encima</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>cluster_mean_long <span class="ot">&lt;-</span> Xshape_long <span class="sc">%&gt;%</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cluster, dist_m) <span class="sc">%&gt;%</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">z_mean =</span> <span class="fu">mean</span>(z, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Una figura por cluster</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (cl <span class="cf">in</span> <span class="fu">levels</span>(Xshape_long<span class="sc">$</span>cluster)) {</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> <span class="fu">filter</span>(Xshape_long, cluster <span class="sc">==</span> cl),</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> dist_m, <span class="at">y =</span> z, <span class="at">group =</span> Competitor)</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> <span class="fu">filter</span>(cluster_mean_long, cluster <span class="sc">==</span> cl),</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>      <span class="fu">aes</span>(<span class="at">x =</span> dist_m, <span class="at">y =</span> z_mean, <span class="at">group =</span> <span class="dv">1</span>),</span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>      <span class="at">linewidth =</span> <span class="fl">1.4</span></span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="fu">paste</span>(<span class="st">"Perfiles normalizados (Xshape) - Cluster"</span>, cl),</span>
+<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a>      <span class="at">subtitle =</span> <span class="st">"Líneas finas: corredores. Línea gruesa: media del cluster."</span>,</span>
+<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="st">"Distancia (m)"</span>,</span>
+<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">"z-score del split"</span></span>
+<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span>
+<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(p)</span>
+<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="intro_files/figure-html/figuras-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="intro_files/figure-html/figuras-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="intro_files/figure-html/figuras-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Cada línea fina corresponde a un corredor del cluster (perfil normalizado). Línea gruesa = perfil medio del cluster (tendencia típica).</p>
+<p>Como son z-scores:</p>
+<ul>
+<li><p>valores negativos suelen indicar tramos relativamente más rápidos (menor tiempo por 100m),</p></li>
+<li><p>valores positivos tramos relativamente más lentos.</p></li>
+</ul>
+</section>
+<section id="tabla-corredor-cluster" class="level3" data-number="2.6.4">
+<h3 data-number="2.6.4" class="anchored" data-anchor-id="tabla-corredor-cluster"><span class="header-section-number">2.6.4</span> Tabla corredor → cluster</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    Competitor,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    Place,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    Time,</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster =</span> <span class="fu">factor</span>(clusters)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(cluster, Place)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(res, <span class="at">n =</span> <span class="dv">50</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 12 × 4
+   Competitor          Place Time   cluster
+   &lt;chr&gt;               &lt;dbl&gt; &lt;time&gt; &lt;fct&gt;  
+ 1 Faith Kipyegon          1 03:51  1      
+ 2 Jessica Hull            2 03:52  1      
+ 3 Georgia Hunter Bell     3 03:52  1      
+ 4 Diribe Welteji          4 03:52  1      
+ 5 Laura Muir              5 03:53  1      
+ 6 Susan Lokayo Ejore      6 03:56  2      
+ 7 Nikki Hiltz             7 03:56  2      
+ 8 Elle St. Pierre         8 03:57  2      
+ 9 Agathe Guillemot        9 03:59  2      
+10 Gudaf Tsegay           12 04:01  2      
+11 Klaudia Kazimierska    10 04:00  3      
+12 Águeda Marqués         11 04:00  3      </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="interpretación-perfil-medio-por-cluster" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="interpretación-perfil-medio-por-cluster"><span class="header-section-number">2.7</span> Interpretación: perfil medio por cluster</h2>
+<p>Para entender qué caracteriza cada grupo, calculamos el perfil medio del cluster (pero en la escala normalizada Xshape, es decir, forma de pacing).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>profile <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(Xshape)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>profile<span class="sc">$</span>cluster <span class="ot">&lt;-</span> <span class="fu">factor</span>(clusters)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>cluster_mean <span class="ot">&lt;-</span> profile <span class="sc">%&gt;%</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cluster) <span class="sc">%&gt;%</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(split_cols), mean), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>cluster_mean</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 16
+  cluster `100m` `200m` `300m`  `400m`   `500m`  `600m` `700m` `800m` `900m`
+  &lt;fct&gt;    &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+1 1       -0.759  -1.17 -0.906  0.0246  0.00363  0.535   1.30   1.33   0.856
+2 2       -1.81   -1.72 -1.23  -0.689  -0.257    0.0732  0.698  0.640  0.519
+3 3       -1.21   -1.77 -1.24  -0.772  -0.303   -0.171   0.522  0.685  1.13 
+# ℹ 6 more variables: `1000m` &lt;dbl&gt;, `1100m` &lt;dbl&gt;, `1200m` &lt;dbl&gt;,
+#   `1300m` &lt;dbl&gt;, `1400m` &lt;dbl&gt;, `1500m` &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<section id="gráfico-perfil-medio-por-cluster" class="level3" data-number="2.7.1">
+<h3 data-number="2.7.1" class="anchored" data-anchor-id="gráfico-perfil-medio-por-cluster"><span class="header-section-number">2.7.1</span> Gráfico: perfil medio por cluster</h3>
+<p>Este gráfico ayuda a visualizar “dónde” acelera o afloja cada cluster.</p>
+<p>Interpretación de signos (en z-score):</p>
+<ul>
+<li><p>Valores negativos: tramo relativamente más rápido (menor tiempo por 100m) respecto a la media del corredor.</p></li>
+<li><p>Valores positivos: tramo relativamente más lento.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>cluster_mean_long <span class="ot">&lt;-</span> cluster_mean <span class="sc">%&gt;%</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">all_of</span>(split_cols),</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">"split"</span>,</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"z"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dist_m =</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">"m"</span>, <span class="st">""</span>, split)))</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cluster_mean_long,</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> dist_m, <span class="at">y =</span> z, <span class="at">color =</span> cluster, <span class="at">group =</span> cluster)) <span class="sc">+</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.4</span>) <span class="sc">+</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_brewer</span>(<span class="at">palette =</span> <span class="st">"Dark2"</span>) <span class="sc">+</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Perfil medio normalizado por cluster"</span>,</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Valores negativos = tramo relativamente más rápido"</span>,</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Distancia (m)"</span>,</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"z-score del split"</span>,</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Cluster"</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>) <span class="sc">+</span></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>)</span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="intro_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="heatmap-de-xshape-perfiles-normalizados" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="heatmap-de-xshape-perfiles-normalizados"><span class="header-section-number">2.8</span> Heatmap de Xshape (perfiles normalizados)</h2>
+<p>Un heatmap permite ver, corredor por corredor, su patrón relativo de pacing.</p>
+<ul>
+<li><p>Filas: corredores</p></li>
+<li><p>Columnas: splits (100m…1500m)</p></li>
+<li><p>Color: z-score del split (más lento vs más rápido respecto a su propia media)</p></li>
+</ul>
+<p>Para mejorar la lectura, ordenamos las filas según el dendrograma del clustering.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Orden de hojas del dendrograma</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>ord <span class="ot">&lt;-</span> hc<span class="sc">$</span>order</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>Xshape_ord <span class="ot">&lt;-</span> Xshape[ord, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>clusters_ord <span class="ot">&lt;-</span> clusters[ord]</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Heatmap base R: desactivamos clustering interno porque ya ordenamos</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="fu">heatmap</span>(Xshape_ord,</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">Rowv =</span> <span class="cn">NA</span>, <span class="at">Colv =</span> <span class="cn">NA</span>,</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">scale =</span> <span class="st">"none"</span>,</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">labRow =</span> <span class="fu">rownames</span>(Xshape_ord),</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">labCol =</span> <span class="fu">colnames</span>(Xshape_ord),</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Heatmap perfiles Xshape (ordenado por clustering)"</span>,</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="st">"Split (m)"</span>,</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Corredor"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="intro_files/figure-html/heat-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>El heatmap base R usa una paleta por defecto. Si prefieres controlar colores o anotar clusters por el lateral, se puede hacer con paquetes como pheatmap o ComplexHeatmap, pero aquí evitamos dependencias extra.</p>
+</section>
+<section id="etiquetado-automático-de-estrategias" class="level2" data-number="2.9">
+<h2 data-number="2.9" class="anchored" data-anchor-id="etiquetado-automático-de-estrategias"><span class="header-section-number">2.9</span> Etiquetado automático de estrategias</h2>
+<p>A continuación definimos métricas simples (pero interpretables) para “nombrar” estrategias.</p>
+<section id="métricas-de-estrategia" class="level3" data-number="2.9.1">
+<h3 data-number="2.9.1" class="anchored" data-anchor-id="métricas-de-estrategia"><span class="header-section-number">2.9.1</span> Métricas de estrategia</h3>
+<p>Usamos Xshape (z-score por corredor). Definimos:</p>
+<ul>
+<li><p>slope: promedio (últimos 400m) − promedio (primeros 400m).</p></li>
+<li><p>Negativo: tiende a ir a más (negative split).</p></li>
+<li><p>Positivo: tiende a perder ritmo.</p></li>
+<li><p>kick: promedio últimos 300m (1300–1500). Negativo suele indicar kick (más - rápido al final).</p></li>
+<li><p>fast_start: promedio primeros 200m (100–200). Negativo suele indicar salida agresiva.</p></li>
+<li><p>variability: desviación estándar del perfil (irregularidad).</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>early_idx  <span class="ot">&lt;-</span> split_cols <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"100m"</span>,<span class="st">"200m"</span>,<span class="st">"300m"</span>,<span class="st">"400m"</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>late_idx   <span class="ot">&lt;-</span> split_cols <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"1200m"</span>,<span class="st">"1300m"</span>,<span class="st">"1400m"</span>,<span class="st">"1500m"</span>)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>kick_idx   <span class="ot">&lt;-</span> split_cols <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"1300m"</span>,<span class="st">"1400m"</span>,<span class="st">"1500m"</span>)</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>start_idx  <span class="ot">&lt;-</span> split_cols <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"100m"</span>,<span class="st">"200m"</span>)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>strategy_metrics <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Competitor =</span> <span class="fu">rownames</span>(Xshape),</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">cluster =</span> <span class="fu">factor</span>(clusters),</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">slope =</span> <span class="fu">rowMeans</span>(Xshape[, late_idx, <span class="at">drop =</span> <span class="cn">FALSE</span>]) <span class="sc">-</span> <span class="fu">rowMeans</span>(Xshape[, early_idx, <span class="at">drop =</span> <span class="cn">FALSE</span>]),</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">kick =</span> <span class="fu">rowMeans</span>(Xshape[, kick_idx, <span class="at">drop =</span> <span class="cn">FALSE</span>]),</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">fast_start =</span> <span class="fu">rowMeans</span>(Xshape[, start_idx, <span class="at">drop =</span> <span class="cn">FALSE</span>]),</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">variability =</span> <span class="fu">apply</span>(Xshape, <span class="dv">1</span>, sd)</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(strategy_metrics)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                             Competitor cluster       slope       kick
+Faith Kipyegon           Faith Kipyegon       1 -0.22189923 -1.0552541
+Jessica Hull               Jessica Hull       1  0.24612380 -0.7110243
+Georgia Hunter Bell Georgia Hunter Bell       1 -0.04718941 -0.8305337
+Diribe Welteji           Diribe Welteji       1  0.25056407 -0.6347623
+Laura Muir                   Laura Muir       1 -0.76341136 -1.2997568
+Susan Lokayo Ejore   Susan Lokayo Ejore       2  1.71105548  0.5703518
+                    fast_start variability
+Faith Kipyegon      -0.8333549           1
+Jessica Hull        -1.4767428           1
+Georgia Hunter Bell -0.8619933           1
+Diribe Welteji      -0.9410073           1
+Laura Muir          -0.7125173           1
+Susan Lokayo Ejore  -1.6793693           1</code></pre>
+</div>
+</div>
+</section>
+<section id="reglas-de-decisión-heurísticas" class="level3" data-number="2.9.2">
+<h3 data-number="2.9.2" class="anchored" data-anchor-id="reglas-de-decisión-heurísticas"><span class="header-section-number">2.9.2</span> Reglas de decisión (heurísticas)</h3>
+<p>Estas reglas usan umbrales en z-score. Son heurísticas: funcionan razonablemente, pero conviene ajustarlas si cambian el tipo de carrera, el nivel, o si quieres categorías más/menos estrictas.</p>
+<p>Lógica general:</p>
+<ul>
+<li><p>Si el final es relativamente más rápido (kick muy negativo) y además el perfil va a más (slope &lt; 0), etiquetamos como kick final fuerte.</p></li>
+<li><p>Si sale muy rápido (fast_start muy negativo) pero luego se desacelera (slope &gt; 0), etiquetamos como salida rápida y se apaga.</p></li>
+<li><p>Si el perfil es muy estable (pendiente pequeña y baja variabilidad), lo marcamos como ritmo constante.</p></li>
+<li><p>Si no encaja claramente, lo dejamos como estrategia mixta.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>label_strategy <span class="ot">&lt;-</span> <span class="cf">function</span>(slope, kick, fast_start, variability) {</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (kick <span class="sc">&lt;</span> <span class="sc">-</span><span class="fl">0.5</span> <span class="sc">&amp;&amp;</span> slope <span class="sc">&lt;</span> <span class="dv">0</span>) {</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="st">"Kick final fuerte"</span>)</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (fast_start <span class="sc">&lt;</span> <span class="sc">-</span><span class="fl">0.5</span> <span class="sc">&amp;&amp;</span> slope <span class="sc">&gt;</span> <span class="fl">0.3</span>) {</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="st">"Salida rápida, se apaga"</span>)</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">abs</span>(slope) <span class="sc">&lt;</span> <span class="fl">0.2</span> <span class="sc">&amp;&amp;</span> variability <span class="sc">&lt;</span> <span class="fl">0.6</span>) {</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="st">"Ritmo muy constante"</span>)</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (slope <span class="sc">&gt;</span> <span class="fl">0.5</span>) {</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="st">"Desaceleración progresiva"</span>)</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (slope <span class="sc">&lt;</span> <span class="sc">-</span><span class="fl">0.5</span>) {</span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="st">"Negativa progresiva"</span>)</span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="st">"Estrategia mixta"</span>)</span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>strategy_metrics<span class="sc">$</span>label <span class="ot">&lt;-</span> <span class="fu">mapply</span>(</span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>  label_strategy,</span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>  strategy_metrics<span class="sc">$</span>slope,</span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>  strategy_metrics<span class="sc">$</span>kick,</span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a>  strategy_metrics<span class="sc">$</span>fast_start,</span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a>  strategy_metrics<span class="sc">$</span>variability</span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a>strategy_metrics <span class="sc">%&gt;%</span></span>
+<span id="cb31-35"><a href="#cb31-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(label, slope) <span class="sc">%&gt;%</span></span>
+<span id="cb31-36"><a href="#cb31-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                             Competitor cluster       slope        kick
+Jessica Hull               Jessica Hull       1  0.24612380 -0.71102430
+Diribe Welteji           Diribe Welteji       1  0.25056407 -0.63476232
+Laura Muir                   Laura Muir       1 -0.76341136 -1.29975677
+Faith Kipyegon           Faith Kipyegon       1 -0.22189923 -1.05525410
+Georgia Hunter Bell Georgia Hunter Bell       1 -0.04718941 -0.83053370
+Klaudia Kazimierska Klaudia Kazimierska       3  1.42624533  0.04346652
+Águeda Marqués           Águeda Marqués       3  1.45761477  0.02989979
+Susan Lokayo Ejore   Susan Lokayo Ejore       2  1.71105548  0.57035183
+Nikki Hiltz                 Nikki Hiltz       2  1.75178018  0.39338222
+Elle St. Pierre         Elle St. Pierre       2  1.89779221  1.02103441
+Agathe Guillemot       Agathe Guillemot       2  2.11706808  0.62727943
+Gudaf Tsegay               Gudaf Tsegay       2  2.43306434  1.17205680
+                    fast_start variability                   label
+Jessica Hull        -1.4767428           1        Estrategia mixta
+Diribe Welteji      -0.9410073           1        Estrategia mixta
+Laura Muir          -0.7125173           1       Kick final fuerte
+Faith Kipyegon      -0.8333549           1       Kick final fuerte
+Georgia Hunter Bell -0.8619933           1       Kick final fuerte
+Klaudia Kazimierska -1.4778618           1 Salida rápida, se apaga
+Águeda Marqués      -1.5024645           1 Salida rápida, se apaga
+Susan Lokayo Ejore  -1.6793693           1 Salida rápida, se apaga
+Nikki Hiltz         -1.8501257           1 Salida rápida, se apaga
+Elle St. Pierre     -1.7757120           1 Salida rápida, se apaga
+Agathe Guillemot    -1.7563824           1 Salida rápida, se apaga
+Gudaf Tsegay        -1.7580852           1 Salida rápida, se apaga</code></pre>
+</div>
+</div>
+</section>
+<section id="resumen-etiquetas-por-cluster" class="level3" data-number="2.9.3">
+<h3 data-number="2.9.3" class="anchored" data-anchor-id="resumen-etiquetas-por-cluster"><span class="header-section-number">2.9.3</span> Resumen: etiquetas por cluster</h3>
+<p>Esto sirve para ver si los clusters “coinciden” con categorías de estrategia o si hay mezcla.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>strategy_metrics <span class="sc">%&gt;%</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(cluster, label) <span class="sc">%&gt;%</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(cluster, <span class="fu">desc</span>(n))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  cluster                   label n
+1       1       Kick final fuerte 3
+2       1        Estrategia mixta 2
+3       2 Salida rápida, se apaga 5
+4       3 Salida rápida, se apaga 2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(strategy_metrics, <span class="st">"data/strategy_metrics.rds"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Sidebar (Quarto book)
+  const sidebar = document.querySelector(".sidebar");
+  if (!sidebar) return;
+
+  // Evitar duplicados si Quarto rehidrata
+  if (document.getElementById("sidebar-logo")) return;
+
+  const div = document.createElement("div");
+  div.id = "sidebar-logo";
+  div.innerHTML = `
+    <a href="./index.html" aria-label="Inicio">
+      <img src="/images/musa.png" alt="Logo Máster" />
+    </a>
+  `;
+
+  // Insertar arriba del todo del sidebar
+  sidebar.prepend(div);
+});
+</script>
+
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./index.html" class="pagination-link" aria-label="Introducción">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./gap.html" class="pagination-link" aria-label="Análisis Gap">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Análisis Gap</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,299 @@
+---
+title: "Fusión"
+format: html
+---
+
+```{r lectura, include=FALSE}
+strategy_metrics <- readRDS("data/strategy_metrics.rds")
+res_gap_labeled <- readRDS("data/res_gap_labeled.rds")
+```
+
+```{r setup, include=FALSE}
+source("./data_prep.R")
+```
+
+Comparamos dos dimensiones distintas:
+
+-   Pacing interno (Xshape) → estrategia fisiológica.
+
+-   Dinámica del gap (Gshape) → comportamiento competitivo relativo.
+
+Si coinciden, el patrón es fuerte. Si no coinciden, eso es información táctica valiosa.
+
+El objetivo es responder preguntas como:
+
+-   ¿Los que hacen “kick final fuerte” realmente recortan gap?
+
+-   ¿Los que salen rápido terminan perdiendo contacto?
+
+-   ¿Hay perfiles fisiológicos que no se traducen en ventaja competitiva?
+
+## Tabla cruzada
+
+```{r tabla_cruzada}
+library(dplyr)
+
+compare_labels <- strategy_metrics %>%
+  select(Competitor, pacing_label = label) %>%
+  left_join(
+    res_gap_labeled %>%
+      select(Competitor, gap_label = label),
+    by = "Competitor"
+  )
+
+compare_labels
+
+```
+
+Tabla de contingencia:
+
+```{r tabla_contingencia}
+table_labels <- table(compare_labels$pacing_label,
+                      compare_labels$gap_label)
+
+table_labels
+prop.table(table_labels, margin = 1)
+
+```
+
+## Visualización
+
+```{r}
+library(ggplot2)
+
+heat_df <- as.data.frame(table_labels)
+colnames(heat_df) <- c("Pacing", "Gap", "Count")
+
+ggplot(heat_df, aes(x = Gap, y = Pacing, fill = Count)) +
+  geom_tile() +
+  geom_text(aes(label = Count)) +
+  scale_fill_gradient(low = "white", high = "steelblue") +
+  labs(
+    title = "Cruce: Pacing interno vs Dinámica competitiva",
+    x = "Dinámica del gap",
+    y = "Pacing interno"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+## Interpretación
+
+**Caso 1 — Coincidencia fuerte:**
+
+Si “Kick final fuerte” (pacing) coincide mayoritariamente con “Ataque final” (gap):
+
+→ La estrategia interna se traduce en ventaja competitiva.
+
+**Caso 2 — Desacople**
+
+Si muchos “Salida rápida, se apaga” terminan en “Se descuelga progresivamente”:
+
+→ Estrategia agresiva insostenible.
+
+**Caso 3 — Estrategia no determinante**
+
+Si “Ritmo constante” se reparte entre varias dinámicas del gap:
+
+→ El pacing interno no explica totalmente el resultado competitivo.
+
+## Gráfico tipo Sankey (pacing → gap)
+
+Necesitamos una tabla de flujos.
+
+```{r}
+library(dplyr)
+
+fusion_df <- strategy_metrics %>%
+  select(Competitor, pacing_label = label) %>%
+  left_join(
+    res_gap_labeled %>%
+      select(Competitor, gap_label = label),
+    by = "Competitor"
+  ) %>%
+  left_join(
+    datos %>%
+      select(Competitor, Place, Time),
+    by = "Competitor"
+  )
+
+fusion_df
+flow_data <- fusion_df %>%
+  count(pacing_label, gap_label)
+
+```
+```{r}
+library(dplyr)
+library(ggplot2)
+library(ggalluvial)
+library(stringr)
+library(ggrepel)
+
+# flow_data debe ser: pacing_label, gap_label, n
+# Si no lo tienes:
+# flow_data <- fusion_df %>% count(pacing_label, gap_label, name = "n")
+
+# 1) Abreviar etiquetas (ajusta a tu gusto)
+short_label <- function(x, width = 18) str_wrap(x, width = width)
+
+flow_plot <- flow_data %>%
+  mutate(
+    pacing_s = short_label(pacing_label, 16),
+    gap_s    = short_label(gap_label, 16)
+  )
+
+# 2) Ordenar niveles para mejorar lectura (ejemplo: por total descendente)
+pacing_order <- flow_plot %>%
+  group_by(pacing_s) %>%
+  summarise(total = sum(n), .groups = "drop") %>%
+  arrange(desc(total)) %>%
+  pull(pacing_s)
+
+gap_order <- flow_plot %>%
+  group_by(gap_s) %>%
+  summarise(total = sum(n), .groups = "drop") %>%
+  arrange(desc(total)) %>%
+  pull(gap_s)
+
+flow_plot <- flow_plot %>%
+  mutate(
+    pacing_s = factor(pacing_s, levels = pacing_order),
+    gap_s    = factor(gap_s, levels = gap_order)
+  )
+
+# 3) Plot
+ggplot(flow_plot,
+       aes(axis1 = pacing_s, axis2 = gap_s, y = n)) +
+  geom_alluvium(aes(fill = pacing_s), width = 0.18, alpha = 0.8, color = "grey35") +
+  geom_stratum(width = 0.22, fill = "grey92", color = "grey30") +
+  # Conteos en los flujos (centro)
+  geom_text(stat = "alluvium", aes(label = n),
+            size = 4, color = "black", alpha = 0.9) +
+  # Etiquetas de estratos (wrap)
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)),
+            size = 4, lineheight = 0.95) +
+  scale_x_discrete(limits = c("Pacing interno", "Dinámica del gap"),
+                   expand = c(.06, .06)) +
+  guides(fill = guide_legend(title = "Pacing (abreviado)")) +
+  labs(
+    title = "Flujo entre tipologías: pacing interno vs dinámica del gap",
+    y = "Número de corredores"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    legend.position = "bottom",
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+```
+
+
+Interpretación:
+
+- Flujo ancho → transición frecuente.
+
+- Si muchas categorías confluyen en una → esa dimensión domina.
+
+## Podium
+
+¿Qué tipología está asociada al podio?
+
+Creamos variable binaria:
+
+```{r podium}
+fusion_df <- fusion_df %>%
+  mutate(podium = ifelse(Place <= 3, 1, 0))
+```
+
+
+Asociación simple (proporción de podio por tipología)
+
+Pacing interno:
+
+```{r}
+fusion_df %>%
+  group_by(pacing_label) %>%
+  summarise(
+    prop_podium = mean(podium),
+    n = n()
+  ) %>%
+  arrange(desc(prop_podium))
+```
+
+Gap competitivo
+```{r}
+fusion_df %>%
+  group_by(gap_label) %>%
+  summarise(
+    prop_podium = mean(podium),
+    n = n()
+  ) %>%
+  arrange(desc(prop_podium))
+```
+
+Test estadístico
+```{r}
+chisq.test(table(fusion_df$pacing_label, fusion_df$podium))
+chisq.test(table(fusion_df$gap_label, fusion_df$podium))
+```
+
+**¿Qué dimensión explica mejor la posición final?**
+
+Usamos regresión lineal sobre Place.
+
+Modelo 1 — Solo pacing
+
+```{r}
+m1 <- lm(Place ~ pacing_label, data = fusion_df)
+summary(m1)
+```
+
+Modelo 2 — Solo gap
+```{r}
+m2 <- lm(Place ~ gap_label, data = fusion_df)
+summary(m2)
+```
+
+Modelo 3 — Ambos
+```{r}
+m3 <- lm(Place ~ pacing_label + gap_label, data = fusion_df)
+summary(m3)
+```
+
+Comparación objetiva
+```{r}
+AIC(m1, m2, m3)
+```
+
+- Menor AIC → mejor capacidad explicativa.
+
+También comparamos R²:
+
+```{r}
+summary(m1)$r.squared
+summary(m2)$r.squared
+summary(m3)$r.squared
+```
+
+Interpretación esperable
+
+Si ocurre esto:
+
+- Gap tiene mayor R² que pacing → la dinámica competitiva explica mejor el resultado.
+
+- Ambos juntos mejoran → ambas dimensiones aportan información distinta.
+
+- Pacing no significativo pero gap sí → la táctica relativa pesa más que el patrón interno.
+
+Ojo Place es ordinal, no continuo. Más correcto sería:
+
+```{r}
+library(MASS)
+polr(as.factor(Place) ~ pacing_label + gap_label, data = fusion_df, Hess = TRUE)
+```
+
+Pero con muestras pequeñas, cuidado con sobreinterpretar.
+
+
+---

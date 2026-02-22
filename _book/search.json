@@ -1,0 +1,372 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Análisis carreras 1500m",
+    "section": "",
+    "text": "1 Introducción\nEl análisis del rendimiento en pruebas de 1500 metros no puede limitarse al tiempo final. Una carrera de medio fondo es una secuencia dinámica de decisiones tácticas, cambios de ritmo y posicionamiento relativo dentro del grupo. Entender estos elementos requiere ir más allá del cronómetro y estudiar la estructura temporal de la competición.\nEn esta práctica se desarrollará un enfoque cuantitativo para analizar carreras de 1500m a partir de los splits cada 100 metros. El objetivo es explorar dos dimensiones complementarias:\n\nPacing interno: cómo distribuye cada atleta su esfuerzo a lo largo de la carrera.\nDinámica competitiva: cómo evoluciona su posición relativa respecto a la cabeza de carrera.\n\nA partir de estas series temporales se construirán métricas descriptivas, se aplicarán técnicas de clustering para identificar patrones estratégicos y se evaluará la relación entre dichos patrones y el resultado final.\nEl enfoque es reproducible y basado en datos, con especial atención a:\n\nLa representación adecuada de series temporales.\nLa separación entre nivel absoluto y forma dinámica.\nLa interpretación crítica de los modelos utilizados.\n\nEl propósito no es únicamente clasificar corredores, sino comprender qué tipo de dinámica está asociada a mejores resultados y hasta qué punto la estrategia interna se traduce en ventaja competitiva.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introducción</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html",
+    "href": "intro.html",
+    "title": "2  Análisis velocidad",
+    "section": "",
+    "text": "2.1 Objetivo y datos\nEn este documento vamos a:\nLa idea clave es separar dos conceptos:\nPara agrupar por estrategia, compararemos la forma del perfil, no el tiempo absoluto.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Análisis velocidad</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html#objetivo-y-datos",
+    "href": "intro.html#objetivo-y-datos",
+    "title": "2  Análisis velocidad",
+    "section": "",
+    "text": "Leer un CSV con resultados de una carrera de 1500m.\nExtraer los splits cada 100m (columnas 100m, 200m, …, 1500m).\nConstruir representaciones comparables entre corredores.\nAgrupar corredores por estrategia (forma del pacing) con clustering jerárquico.\nResumir e interpretar cada grupo y etiquetar automáticamente estrategias.\n\n\n\nNivel de rendimiento: quién es más rápido en términos absolutos.\nEstrategia (pacing): cómo distribuye el esfuerzo a lo largo de la carrera (salida fuerte, ritmo constante, kick final, etc.).",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Análisis velocidad</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html#lectura-del-csv",
+    "href": "intro.html#lectura-del-csv",
+    "title": "2  Análisis velocidad",
+    "section": "2.2 Lectura del CSV",
+    "text": "2.2 Lectura del CSV",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Análisis velocidad</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html#visualización",
+    "href": "intro.html#visualización",
+    "title": "2  Análisis velocidad",
+    "section": "2.3 Visualización",
+    "text": "2.3 Visualización\n\nlibrary(dplyr)\nlibrary(tidyr)\nlibrary(ggplot2)\n\nsplit_cols &lt;- grep(\"^\\\\d+m$\", names(datos), value = TRUE)\n\n# Top 3 según la clasificación (Place 1,2,3)\ntop3 &lt;- datos %&gt;%\n  arrange(Place) %&gt;%\n  slice(1:3) %&gt;%\n  pull(Competitor)\n\nsplits_long &lt;- datos %&gt;%\n  select(Place, Competitor, all_of(split_cols)) %&gt;%\n  pivot_longer(cols = all_of(split_cols),\n               names_to = \"split\",\n               values_to = \"split_time\") %&gt;%\n  mutate(\n    dist_m = as.integer(sub(\"m$\", \"\", split)),\n    highlight = if_else(Competitor %in% top3, Competitor, \"Otros\")\n  ) %&gt;%\n  arrange(Competitor, dist_m)\n\nggplot(splits_long,\n       aes(x = dist_m, y = split_time, group = Competitor, color = highlight)) +\n  geom_line(linewidth = 0.8, alpha = 0.75) +\n  geom_point(size = 1.3, alpha = 0.75) +\n  scale_color_manual(\n    values = c(\"Otros\" = \"grey70\",\n               setNames(c(\"#1b9e77\", \"#d95f02\", \"#7570b3\"), top3))\n  ) +\n  labs(\n    title = \"Splits (tiempo por 100m) por corredor — Top 3 resaltado\",\n    subtitle = \"Colores: top-3 por posición final. Resto en gris.\",\n    x = \"Distancia (m)\",\n    y = \"Tiempo del split (s)\",\n    color = \"\"\n  ) +\n  theme_minimal(base_size = 13) +\n  theme(legend.position = \"bottom\")\n\n\n\n\n\n\n\n\nCon el tiempo acumulado\n\nsplits_long_cum &lt;- splits_long %&gt;%\n  group_by(Competitor) %&gt;%\n  mutate(cum_time = cumsum(split_time)) %&gt;%\n  ungroup()\n\nggplot(splits_long_cum, aes(x = dist_m, y = cum_time, group = Competitor)) +\n  geom_line(alpha = 0.6, linewidth = 0.7) +\n  labs(\n    title = \"Tiempo acumulado por corredor (cada 100m)\",\n    subtitle = \"Curvas más bajas = corredores más rápidos en cada punto\",\n    x = \"Distancia (m)\",\n    y = \"Tiempo acumulado (s)\"\n  ) +\n  theme_minimal(base_size = 13)",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Análisis velocidad</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html#selección-de-splits-y-construcción-de-la-matriz-x",
+    "href": "intro.html#selección-de-splits-y-construcción-de-la-matriz-x",
+    "title": "2  Análisis velocidad",
+    "section": "2.4 Selección de splits y construcción de la matriz X",
+    "text": "2.4 Selección de splits y construcción de la matriz X\nLos splits aparecen como columnas 100m, 200m, … 1500m. Los capturamos con una expresión regular: columnas que son “número + m”.\n\nlibrary(dplyr)\n\nsplit_cols &lt;- grep(\"^\\\\d+m$\", names(datos), value = TRUE)\nsplit_cols\n\n [1] \"100m\"  \"200m\"  \"300m\"  \"400m\"  \"500m\"  \"600m\"  \"700m\"  \"800m\"  \"900m\" \n[10] \"1000m\" \"1100m\" \"1200m\" \"1300m\" \"1400m\" \"1500m\"\n\n\nConstruimos una matriz numérica X:\n\nFilas: corredores\nColumnas: splits (cada 100m)\n\n\nX &lt;- datos %&gt;%\n  select(all_of(split_cols)) %&gt;%\n  as.matrix()\n\ndim(X)\n\n[1] 12 15\n\n\n\n2.4.1 Manejo simple de valores faltantes (NA)\ndist() no maneja bien NA. Si existieran, usamos una imputación muy simple: reemplazamos cada NA por la media de su columna (tramo).\nEsto no es “la verdad”, pero evita que el cálculo falle y suele ser aceptable si hay pocos NA.\n\nif (anyNA(X)) {\n  col_means &lt;- colMeans(X, na.rm = TRUE)\n  for (j in seq_len(ncol(X))) {\n    X[is.na(X[, j]), j] &lt;- col_means[j]\n  }\n}\n\nanyNA(X)\n\n[1] FALSE",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Análisis velocidad</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html#distancias-entre-corredores-tres-enfoques",
+    "href": "intro.html#distancias-entre-corredores-tres-enfoques",
+    "title": "2  Análisis velocidad",
+    "section": "2.5 Distancias entre corredores: tres enfoques",
+    "text": "2.5 Distancias entre corredores: tres enfoques\n\n2.5.1 Euclídea sobre splits “tal cual”\nEsta distancia mezcla velocidad absoluta + forma del pacing.\n\nD &lt;- as.matrix(dist(X, method = \"euclidean\"))\nrownames(D) &lt;- datos$Competitor\ncolnames(D) &lt;- datos$Competitor\n\nD[1:5, 1:5]\n\n                    Faith Kipyegon Jessica Hull Georgia Hunter Bell\nFaith Kipyegon           0.0000000    1.0816654           0.8831761\nJessica Hull             1.0816654    0.0000000           0.8185353\nGeorgia Hunter Bell      0.8831761    0.8185353           0.0000000\nDiribe Welteji           1.1704700    0.8831761           0.7280110\nLaura Muir               1.7406895    1.3928388           1.2845233\n                    Diribe Welteji Laura Muir\nFaith Kipyegon           1.1704700   1.740690\nJessica Hull             0.8831761   1.392839\nGeorgia Hunter Bell      0.7280110   1.284523\nDiribe Welteji           0.0000000   1.421267\nLaura Muir               1.4212670   0.000000\n\n\n\n\n2.5.2 Distancia por “forma de pacing” (z-score por corredor)\nPara estudiar estrategia, queremos ignorar que uno sea globalmente más rápido que otro y fijarnos en el patrón relativo (salida / ritmo / kick).\nPara eso, estandarizamos cada fila (cada corredor):\nRestar la media de sus splits\nDividir por su desviación estándar\n\nrow_z &lt;- function(v) {\n  s &lt;- sd(v, na.rm = TRUE)\n  if (is.na(s) || s == 0) return(rep(0, length(v)))\n  (v - mean(v, na.rm = TRUE)) / s\n}\n\nXshape &lt;- t(apply(X, 1, row_z))\ncolnames(Xshape) &lt;- split_cols\nrownames(Xshape) &lt;- datos$Competitor\n\nD_shape &lt;- as.matrix(dist(Xshape, method = \"euclidean\"))\nD_shape[1:5, 1:5]\n\n                    Faith Kipyegon Jessica Hull Georgia Hunter Bell\nFaith Kipyegon           0.0000000     1.554367           0.9887085\nJessica Hull             1.5543670     0.000000           1.3408311\nGeorgia Hunter Bell      0.9887085     1.340831           0.0000000\nDiribe Welteji           1.6756664     1.458116           1.2081597\nLaura Muir               2.5417275     2.343352           2.5492824\n                    Diribe Welteji Laura Muir\nFaith Kipyegon            1.675666   2.541727\nJessica Hull              1.458116   2.343352\nGeorgia Hunter Bell       1.208160   2.549282\nDiribe Welteji            0.000000   2.487792\nLaura Muir                2.487792   0.000000\n\n\n\n\n2.5.3 Distancia basada en correlación (perfiles)\nSi dos perfiles tienen la misma forma aunque uno sea más rápido, su correlación será alta. Definimos distancia como 1 - correlación.\n\nD_cor &lt;- as.matrix(as.dist(1 - cor(t(X), use = \"pairwise.complete.obs\")))\nrownames(D_cor) &lt;- datos$Competitor\ncolnames(D_cor) &lt;- datos$Competitor\n\nD_cor[1:5, 1:5]\n\n                    Faith Kipyegon Jessica Hull Georgia Hunter Bell\nFaith Kipyegon          0.00000000   0.08628774          0.03491230\nJessica Hull            0.08628774   0.00000000          0.06420815\nGeorgia Hunter Bell     0.03491230   0.06420815          0.00000000\nDiribe Welteji          0.10028064   0.07593217          0.05213035\nLaura Muir              0.23072781   0.19611779          0.23210146\n                    Diribe Welteji Laura Muir\nFaith Kipyegon          0.10028064  0.2307278\nJessica Hull            0.07593217  0.1961178\nGeorgia Hunter Bell     0.05213035  0.2321015\nDiribe Welteji          0.00000000  0.2210396\nLaura Muir              0.22103957  0.0000000",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Análisis velocidad</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html#clustering-por-estrategia-pacing",
+    "href": "intro.html#clustering-por-estrategia-pacing",
+    "title": "2  Análisis velocidad",
+    "section": "2.6 Clustering por estrategia (pacing)",
+    "text": "2.6 Clustering por estrategia (pacing)\nAquí usamos Xshape (perfil normalizado por corredor), que es la representación más alineada con “estrategia”.\n\n2.6.0.1 Clustering jerárquico (Ward)\nCalculamos distancias euclídeas entre perfiles normalizados.\nAplicamos hclust con método ward.D2.\n\nd &lt;- dist(Xshape, method = \"euclidean\")\nhc &lt;- hclust(d, method = \"ward.D2\")\n\n\n\n2.6.1 Elección del número de clusters con silhouette\nProbamos k = 2..8 y elegimos el que maximiza la silhouette media.\n\nlibrary(cluster)\n\nk_grid &lt;- 2:8\nsil &lt;- sapply(k_grid, function(k) {\n  cl &lt;- cutree(hc, k = k)\n  mean(silhouette(cl, d)[, 3])\n})\n\nk_best &lt;- k_grid[which.max(sil)]\nk_best\n\n[1] 2\n\nplot(k_grid, sil, type = \"b\",\n     xlab = \"k (número de clusters)\", ylab = \"Silhouette media\",\n     main = \"Selección de k por silhouette\")\n\n\n\n\n\n\n\n\nSi quieres forzar un valor (p.ej. porque te interesa interpretabilidad), puedes hacerlo:\n\nk_best &lt;- 3\nclusters &lt;- cutree(hc, k = k_best)\ntable(clusters)\n\nclusters\n1 2 3 \n5 5 2 \n\n\n\n\n2.6.2 Dendrograma\n\nplot(hc, labels = datos$Competitor,\n     main = \"Clustering por estrategia (pacing) - Ward.D2\",\n     xlab = \"\", sub = \"\")\nrect.hclust(hc, k = k_best, border = 2:6)\n\n\n\n\n\n\n\n\n\n\n2.6.3 Representación\n\nlibrary(ggplot2)\nlibrary(dplyr)\nlibrary(tidyr)\n\n# Pasar Xshape a formato largo con cluster\nXshape_df &lt;- as.data.frame(Xshape)\nXshape_df$Competitor &lt;- rownames(Xshape_df)\nXshape_df$cluster &lt;- factor(clusters)\n\nXshape_long &lt;- Xshape_df %&gt;%\n  pivot_longer(cols = all_of(split_cols),\n               names_to = \"split\",\n               values_to = \"z\") %&gt;%\n  mutate(dist_m = as.numeric(gsub(\"m\", \"\", split)))\n\n# (Opcional) media por cluster para dibujar encima\ncluster_mean_long &lt;- Xshape_long %&gt;%\n  group_by(cluster, dist_m) %&gt;%\n  summarise(z_mean = mean(z, na.rm = TRUE), .groups = \"drop\")\n\n# Una figura por cluster\nfor (cl in levels(Xshape_long$cluster)) {\n\n  p &lt;- ggplot(\n    data = filter(Xshape_long, cluster == cl),\n    aes(x = dist_m, y = z, group = Competitor)\n  ) +\n    geom_line(alpha = 0.6, linewidth = 0.7) +\n    geom_line(\n      data = filter(cluster_mean_long, cluster == cl),\n      aes(x = dist_m, y = z_mean, group = 1),\n      linewidth = 1.4\n    ) +\n    labs(\n      title = paste(\"Perfiles normalizados (Xshape) - Cluster\", cl),\n      subtitle = \"Líneas finas: corredores. Línea gruesa: media del cluster.\",\n      x = \"Distancia (m)\",\n      y = \"z-score del split\"\n    ) +\n    theme_minimal()\n\n  print(p)\n}\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCada línea fina corresponde a un corredor del cluster (perfil normalizado). Línea gruesa = perfil medio del cluster (tendencia típica).\nComo son z-scores:\n\nvalores negativos suelen indicar tramos relativamente más rápidos (menor tiempo por 100m),\nvalores positivos tramos relativamente más lentos.\n\n\n\n2.6.4 Tabla corredor → cluster\n\nres &lt;- datos %&gt;%\n  transmute(\n    Competitor,\n    Place,\n    Time,\n    cluster = factor(clusters)\n  ) %&gt;%\n  arrange(cluster, Place)\n\nprint(res, n = 50)\n\n# A tibble: 12 × 4\n   Competitor          Place Time   cluster\n   &lt;chr&gt;               &lt;dbl&gt; &lt;time&gt; &lt;fct&gt;  \n 1 Faith Kipyegon          1 03:51  1      \n 2 Jessica Hull            2 03:52  1      \n 3 Georgia Hunter Bell     3 03:52  1      \n 4 Diribe Welteji          4 03:52  1      \n 5 Laura Muir              5 03:53  1      \n 6 Susan Lokayo Ejore      6 03:56  2      \n 7 Nikki Hiltz             7 03:56  2      \n 8 Elle St. Pierre         8 03:57  2      \n 9 Agathe Guillemot        9 03:59  2      \n10 Gudaf Tsegay           12 04:01  2      \n11 Klaudia Kazimierska    10 04:00  3      \n12 Águeda Marqués         11 04:00  3",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Análisis velocidad</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html#interpretación-perfil-medio-por-cluster",
+    "href": "intro.html#interpretación-perfil-medio-por-cluster",
+    "title": "2  Análisis velocidad",
+    "section": "2.7 Interpretación: perfil medio por cluster",
+    "text": "2.7 Interpretación: perfil medio por cluster\nPara entender qué caracteriza cada grupo, calculamos el perfil medio del cluster (pero en la escala normalizada Xshape, es decir, forma de pacing).\n\nlibrary(tidyr)\n\nprofile &lt;- as.data.frame(Xshape)\nprofile$cluster &lt;- factor(clusters)\n\ncluster_mean &lt;- profile %&gt;%\n  group_by(cluster) %&gt;%\n  summarise(across(all_of(split_cols), mean), .groups = \"drop\")\n\ncluster_mean\n\n# A tibble: 3 × 16\n  cluster `100m` `200m` `300m`  `400m`   `500m`  `600m` `700m` `800m` `900m`\n  &lt;fct&gt;    &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;\n1 1       -0.759  -1.17 -0.906  0.0246  0.00363  0.535   1.30   1.33   0.856\n2 2       -1.81   -1.72 -1.23  -0.689  -0.257    0.0732  0.698  0.640  0.519\n3 3       -1.21   -1.77 -1.24  -0.772  -0.303   -0.171   0.522  0.685  1.13 \n# ℹ 6 more variables: `1000m` &lt;dbl&gt;, `1100m` &lt;dbl&gt;, `1200m` &lt;dbl&gt;,\n#   `1300m` &lt;dbl&gt;, `1400m` &lt;dbl&gt;, `1500m` &lt;dbl&gt;\n\n\n\n2.7.1 Gráfico: perfil medio por cluster\nEste gráfico ayuda a visualizar “dónde” acelera o afloja cada cluster.\nInterpretación de signos (en z-score):\n\nValores negativos: tramo relativamente más rápido (menor tiempo por 100m) respecto a la media del corredor.\nValores positivos: tramo relativamente más lento.\n\n\nlibrary(ggplot2)\nlibrary(dplyr)\nlibrary(tidyr)\n\ncluster_mean_long &lt;- cluster_mean %&gt;%\n  pivot_longer(cols = all_of(split_cols),\n               names_to = \"split\",\n               values_to = \"z\") %&gt;%\n  mutate(dist_m = as.numeric(gsub(\"m\", \"\", split)))\n\nggplot(cluster_mean_long,\n       aes(x = dist_m, y = z, color = cluster, group = cluster)) +\n  geom_line(linewidth = 1.4) +\n  geom_point(size = 2) +\n  scale_color_brewer(palette = \"Dark2\") +\n  labs(\n    title = \"Perfil medio normalizado por cluster\",\n    subtitle = \"Valores negativos = tramo relativamente más rápido\",\n    x = \"Distancia (m)\",\n    y = \"z-score del split\",\n    color = \"Cluster\"\n  ) +\n  theme_minimal(base_size = 13) +\n  theme(\n    legend.position = \"bottom\",\n    plot.title = element_text(face = \"bold\")\n  )",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Análisis velocidad</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html#heatmap-de-xshape-perfiles-normalizados",
+    "href": "intro.html#heatmap-de-xshape-perfiles-normalizados",
+    "title": "2  Análisis velocidad",
+    "section": "2.8 Heatmap de Xshape (perfiles normalizados)",
+    "text": "2.8 Heatmap de Xshape (perfiles normalizados)\nUn heatmap permite ver, corredor por corredor, su patrón relativo de pacing.\n\nFilas: corredores\nColumnas: splits (100m…1500m)\nColor: z-score del split (más lento vs más rápido respecto a su propia media)\n\nPara mejorar la lectura, ordenamos las filas según el dendrograma del clustering.\n\n# Orden de hojas del dendrograma\nord &lt;- hc$order\n\nXshape_ord &lt;- Xshape[ord, , drop = FALSE]\nclusters_ord &lt;- clusters[ord]\n\n# Heatmap base R: desactivamos clustering interno porque ya ordenamos\nheatmap(Xshape_ord,\n        Rowv = NA, Colv = NA,\n        scale = \"none\",\n        labRow = rownames(Xshape_ord),\n        labCol = colnames(Xshape_ord),\n        main = \"Heatmap perfiles Xshape (ordenado por clustering)\",\n        xlab = \"Split (m)\",\n        ylab = \"Corredor\")\n\n\n\n\n\n\n\n\nEl heatmap base R usa una paleta por defecto. Si prefieres controlar colores o anotar clusters por el lateral, se puede hacer con paquetes como pheatmap o ComplexHeatmap, pero aquí evitamos dependencias extra.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Análisis velocidad</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html#etiquetado-automático-de-estrategias",
+    "href": "intro.html#etiquetado-automático-de-estrategias",
+    "title": "2  Análisis velocidad",
+    "section": "2.9 Etiquetado automático de estrategias",
+    "text": "2.9 Etiquetado automático de estrategias\nA continuación definimos métricas simples (pero interpretables) para “nombrar” estrategias.\n\n2.9.1 Métricas de estrategia\nUsamos Xshape (z-score por corredor). Definimos:\n\nslope: promedio (últimos 400m) − promedio (primeros 400m).\nNegativo: tiende a ir a más (negative split).\nPositivo: tiende a perder ritmo.\nkick: promedio últimos 300m (1300–1500). Negativo suele indicar kick (más - rápido al final).\nfast_start: promedio primeros 200m (100–200). Negativo suele indicar salida agresiva.\nvariability: desviación estándar del perfil (irregularidad).\n\n\nearly_idx  &lt;- split_cols %in% c(\"100m\",\"200m\",\"300m\",\"400m\")\nlate_idx   &lt;- split_cols %in% c(\"1200m\",\"1300m\",\"1400m\",\"1500m\")\nkick_idx   &lt;- split_cols %in% c(\"1300m\",\"1400m\",\"1500m\")\nstart_idx  &lt;- split_cols %in% c(\"100m\",\"200m\")\n\nstrategy_metrics &lt;- data.frame(\n  Competitor = rownames(Xshape),\n  cluster = factor(clusters),\n  slope = rowMeans(Xshape[, late_idx, drop = FALSE]) - rowMeans(Xshape[, early_idx, drop = FALSE]),\n  kick = rowMeans(Xshape[, kick_idx, drop = FALSE]),\n  fast_start = rowMeans(Xshape[, start_idx, drop = FALSE]),\n  variability = apply(Xshape, 1, sd)\n)\n\nhead(strategy_metrics)\n\n                             Competitor cluster       slope       kick\nFaith Kipyegon           Faith Kipyegon       1 -0.22189923 -1.0552541\nJessica Hull               Jessica Hull       1  0.24612380 -0.7110243\nGeorgia Hunter Bell Georgia Hunter Bell       1 -0.04718941 -0.8305337\nDiribe Welteji           Diribe Welteji       1  0.25056407 -0.6347623\nLaura Muir                   Laura Muir       1 -0.76341136 -1.2997568\nSusan Lokayo Ejore   Susan Lokayo Ejore       2  1.71105548  0.5703518\n                    fast_start variability\nFaith Kipyegon      -0.8333549           1\nJessica Hull        -1.4767428           1\nGeorgia Hunter Bell -0.8619933           1\nDiribe Welteji      -0.9410073           1\nLaura Muir          -0.7125173           1\nSusan Lokayo Ejore  -1.6793693           1\n\n\n\n\n2.9.2 Reglas de decisión (heurísticas)\nEstas reglas usan umbrales en z-score. Son heurísticas: funcionan razonablemente, pero conviene ajustarlas si cambian el tipo de carrera, el nivel, o si quieres categorías más/menos estrictas.\nLógica general:\n\nSi el final es relativamente más rápido (kick muy negativo) y además el perfil va a más (slope &lt; 0), etiquetamos como kick final fuerte.\nSi sale muy rápido (fast_start muy negativo) pero luego se desacelera (slope &gt; 0), etiquetamos como salida rápida y se apaga.\nSi el perfil es muy estable (pendiente pequeña y baja variabilidad), lo marcamos como ritmo constante.\nSi no encaja claramente, lo dejamos como estrategia mixta.\n\n\nlabel_strategy &lt;- function(slope, kick, fast_start, variability) {\n\n  if (kick &lt; -0.5 && slope &lt; 0) {\n    return(\"Kick final fuerte\")\n  }\n\n  if (fast_start &lt; -0.5 && slope &gt; 0.3) {\n    return(\"Salida rápida, se apaga\")\n  }\n\n  if (abs(slope) &lt; 0.2 && variability &lt; 0.6) {\n    return(\"Ritmo muy constante\")\n  }\n\n  if (slope &gt; 0.5) {\n    return(\"Desaceleración progresiva\")\n  }\n\n  if (slope &lt; -0.5) {\n    return(\"Negativa progresiva\")\n  }\n\n  return(\"Estrategia mixta\")\n}\n\nstrategy_metrics$label &lt;- mapply(\n  label_strategy,\n  strategy_metrics$slope,\n  strategy_metrics$kick,\n  strategy_metrics$fast_start,\n  strategy_metrics$variability\n)\n\nstrategy_metrics %&gt;%\n  arrange(label, slope) %&gt;%\n  print()\n\n                             Competitor cluster       slope        kick\nJessica Hull               Jessica Hull       1  0.24612380 -0.71102430\nDiribe Welteji           Diribe Welteji       1  0.25056407 -0.63476232\nLaura Muir                   Laura Muir       1 -0.76341136 -1.29975677\nFaith Kipyegon           Faith Kipyegon       1 -0.22189923 -1.05525410\nGeorgia Hunter Bell Georgia Hunter Bell       1 -0.04718941 -0.83053370\nKlaudia Kazimierska Klaudia Kazimierska       3  1.42624533  0.04346652\nÁgueda Marqués           Águeda Marqués       3  1.45761477  0.02989979\nSusan Lokayo Ejore   Susan Lokayo Ejore       2  1.71105548  0.57035183\nNikki Hiltz                 Nikki Hiltz       2  1.75178018  0.39338222\nElle St. Pierre         Elle St. Pierre       2  1.89779221  1.02103441\nAgathe Guillemot       Agathe Guillemot       2  2.11706808  0.62727943\nGudaf Tsegay               Gudaf Tsegay       2  2.43306434  1.17205680\n                    fast_start variability                   label\nJessica Hull        -1.4767428           1        Estrategia mixta\nDiribe Welteji      -0.9410073           1        Estrategia mixta\nLaura Muir          -0.7125173           1       Kick final fuerte\nFaith Kipyegon      -0.8333549           1       Kick final fuerte\nGeorgia Hunter Bell -0.8619933           1       Kick final fuerte\nKlaudia Kazimierska -1.4778618           1 Salida rápida, se apaga\nÁgueda Marqués      -1.5024645           1 Salida rápida, se apaga\nSusan Lokayo Ejore  -1.6793693           1 Salida rápida, se apaga\nNikki Hiltz         -1.8501257           1 Salida rápida, se apaga\nElle St. Pierre     -1.7757120           1 Salida rápida, se apaga\nAgathe Guillemot    -1.7563824           1 Salida rápida, se apaga\nGudaf Tsegay        -1.7580852           1 Salida rápida, se apaga\n\n\n\n\n2.9.3 Resumen: etiquetas por cluster\nEsto sirve para ver si los clusters “coinciden” con categorías de estrategia o si hay mezcla.\n\nstrategy_metrics %&gt;%\n  count(cluster, label) %&gt;%\n  arrange(cluster, desc(n))\n\n  cluster                   label n\n1       1       Kick final fuerte 3\n2       1        Estrategia mixta 2\n3       2 Salida rápida, se apaga 5\n4       3 Salida rápida, se apaga 2\n\nsaveRDS(strategy_metrics, \"data/strategy_metrics.rds\")",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Análisis velocidad</span>"
+    ]
+  },
+  {
+    "objectID": "gap.html",
+    "href": "gap.html",
+    "title": "3  Análisis Gap",
+    "section": "",
+    "text": "3.1 GAP respecto al lider\nlibrary(dplyr)\nlibrary(tidyr)\n\nsplit_cols &lt;- grep(\"^\\\\d+m$\", names(datos), value = TRUE)\n\n# 1) Datos a formato largo: un split por corredor y distancia\nlong &lt;- datos %&gt;%\n  select(Competitor, all_of(split_cols)) %&gt;%\n  pivot_longer(cols = all_of(split_cols),\n               names_to = \"split\",\n               values_to = \"split_time\") %&gt;%\n  mutate(dist_m = as.integer(sub(\"m$\", \"\", split))) %&gt;%\n  arrange(Competitor, dist_m)\n\n# 2) Tiempo acumulado por corredor\nlong &lt;- long %&gt;%\n  group_by(Competitor) %&gt;%\n  mutate(cum_time = cumsum(split_time)) %&gt;%\n  ungroup()\n\n# 3) \"Cabeza de carrera\": mínimo tiempo acumulado en cada distancia\nleader_cum &lt;- long %&gt;%\n  group_by(dist_m) %&gt;%\n  summarise(leader_cum_time = min(cum_time, na.rm = TRUE), .groups = \"drop\")\n\n# 4) Velocidad del líder en ese tramo (m/s): usando el split más rápido en ese tramo\nleader_speed &lt;- long %&gt;%\n  group_by(dist_m) %&gt;%\n  summarise(leader_split_time = min(split_time, na.rm = TRUE), .groups = \"drop\") %&gt;%\n  mutate(v_leader = 100 / leader_split_time)\n\n# 5) Gap en tiempo y conversión a metros (aprox)\ngap_ts &lt;- long %&gt;%\n  left_join(leader_cum, by = \"dist_m\") %&gt;%\n  left_join(leader_speed, by = \"dist_m\") %&gt;%\n  mutate(\n    gap_time_sec = cum_time - leader_cum_time,\n    gap_m = gap_time_sec * v_leader\n  ) %&gt;%\n  select(Competitor, dist_m, split_time, cum_time, gap_time_sec, gap_m) %&gt;%\n  arrange(Competitor, dist_m)\n\ngap_ts\n\n# A tibble: 180 × 6\n   Competitor       dist_m split_time cum_time gap_time_sec gap_m\n   &lt;chr&gt;             &lt;int&gt;      &lt;dbl&gt;    &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt;\n 1 Agathe Guillemot    100       14.8     14.8        0.400  2.78\n 2 Agathe Guillemot    200       15.2     30          1.2    8.33\n 3 Agathe Guillemot    300       15.2     45.2        1.30   8.84\n 4 Agathe Guillemot    400       15.4     60.6        1.30   8.44\n 5 Agathe Guillemot    500       15.8     76.4        1.5    9.80\n 6 Agathe Guillemot    600       16       92.4        1.60  10.2 \n 7 Agathe Guillemot    700       16.4    109.         1.70  10.6 \n 8 Agathe Guillemot    800       16.2    125          1.70  10.5 \n 9 Agathe Guillemot    900       16.5    142.         2.10  13.4 \n10 Agathe Guillemot   1000       16.1    158.         1.90  12.1 \n# ℹ 170 more rows",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Análisis Gap</span>"
+    ]
+  },
+  {
+    "objectID": "gap.html#agrupar-corredores-según-gap",
+    "href": "gap.html#agrupar-corredores-según-gap",
+    "title": "3  Análisis Gap",
+    "section": "3.2 Agrupar corredores según gap",
+    "text": "3.2 Agrupar corredores según gap\nEl objetivo es agrupar corredores según la dinámica del gap:\n\nSe descuelga pronto\nSe mantiene estable\nRemonta\nSe hunde al final\netc.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Análisis Gap</span>"
+    ]
+  },
+  {
+    "objectID": "gap.html#construir-matriz-de-series-del-gap",
+    "href": "gap.html#construir-matriz-de-series-del-gap",
+    "title": "3  Análisis Gap",
+    "section": "3.3 Construir matriz de series del gap",
+    "text": "3.3 Construir matriz de series del gap\nPartimos de gap_ts (ya calculado antes).\n\nlibrary(dplyr)\nlibrary(tidyr)\n\ngap_wide &lt;- gap_ts %&gt;%\n  select(Competitor, dist_m, gap_m) %&gt;%\n  pivot_wider(names_from = dist_m, values_from = gap_m) %&gt;%\n  arrange(Competitor)\n\ncompetitors &lt;- gap_wide$Competitor\n\nG &lt;- gap_wide %&gt;%\n  select(-Competitor) %&gt;%\n  as.matrix()\n\nrownames(G) &lt;- competitors",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Análisis Gap</span>"
+    ]
+  },
+  {
+    "objectID": "gap.html#eliminar-nivel-absoluto-normalización-por-corredor",
+    "href": "gap.html#eliminar-nivel-absoluto-normalización-por-corredor",
+    "title": "3  Análisis Gap",
+    "section": "3.4 Eliminar nivel absoluto (normalización por corredor)",
+    "text": "3.4 Eliminar nivel absoluto (normalización por corredor)\nQueremos forma, no magnitud. Usamos z-score por fila:\n\nrow_z &lt;- function(v) {\n  s &lt;- sd(v, na.rm = TRUE)\n  if (is.na(s) || s == 0) return(rep(0, length(v)))\n  (v - mean(v, na.rm = TRUE)) / s\n}\n\nGshape &lt;- t(apply(G, 1, row_z))\nrownames(Gshape) &lt;- competitors\n\nAhora:\n\nValores positivos → gap mayor que su media.\nValores negativos → gap menor que su media.\n\nLa curva describe la tendencia temporal del descolgamiento.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Análisis Gap</span>"
+    ]
+  },
+  {
+    "objectID": "gap.html#clustering-jerárquico-sobre-la-forma",
+    "href": "gap.html#clustering-jerárquico-sobre-la-forma",
+    "title": "3  Análisis Gap",
+    "section": "3.5 Clustering jerárquico sobre la forma",
+    "text": "3.5 Clustering jerárquico sobre la forma\n\nd_gap &lt;- dist(Gshape, method = \"euclidean\")\nhc_gap &lt;- hclust(d_gap, method = \"ward.D2\")\n\nplot(hc_gap, main = \"Clustering por forma del gap\")",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Análisis Gap</span>"
+    ]
+  },
+  {
+    "objectID": "gap.html#elegir-número-de-clusters",
+    "href": "gap.html#elegir-número-de-clusters",
+    "title": "3  Análisis Gap",
+    "section": "3.6 Elegir número de clusters",
+    "text": "3.6 Elegir número de clusters\n\nlibrary(cluster)\n\nk_grid &lt;- 2:6\nsil_gap &lt;- sapply(k_grid, function(k) {\n  cl &lt;- cutree(hc_gap, k = k)\n  mean(silhouette(cl, d_gap)[, 3])\n})\n\nk_best_gap &lt;- k_grid[which.max(sil_gap)]\nk_best_gap\n\n[1] 2\n\nplot(k_grid, sil_gap, type = \"b\",\n     xlab = \"k\",\n     ylab = \"Silhouette media\",\n     main = \"Selección de k (forma del gap)\")\n\n\n\n\n\n\n\n\nTambién podemos elegir a mano el número de clusters.\n\nk_best_gap=3",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Análisis Gap</span>"
+    ]
+  },
+  {
+    "objectID": "gap.html#asignar-clusters",
+    "href": "gap.html#asignar-clusters",
+    "title": "3  Análisis Gap",
+    "section": "3.7 Asignar clusters",
+    "text": "3.7 Asignar clusters\n\nclusters_gap &lt;- cutree(hc_gap, k = k_best_gap)\n\nres_gap &lt;- data.frame(\n  Competitor = competitors,\n  cluster_gap = factor(clusters_gap)\n) %&gt;%\n  arrange(cluster_gap)\n\nres_gap\n\n                             Competitor cluster_gap\nAgathe Guillemot       Agathe Guillemot           1\nElle St. Pierre         Elle St. Pierre           1\nGudaf Tsegay               Gudaf Tsegay           1\nKlaudia Kazimierska Klaudia Kazimierska           1\nNikki Hiltz                 Nikki Hiltz           1\nSusan Lokayo Ejore   Susan Lokayo Ejore           1\nÁgueda Marqués           Águeda Marqués           1\nDiribe Welteji           Diribe Welteji           2\nGeorgia Hunter Bell Georgia Hunter Bell           2\nJessica Hull               Jessica Hull           2\nLaura Muir                   Laura Muir           2\nFaith Kipyegon           Faith Kipyegon           3",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Análisis Gap</span>"
+    ]
+  },
+  {
+    "objectID": "gap.html#visualizar-forma-media-del-gap-por-cluster",
+    "href": "gap.html#visualizar-forma-media-del-gap-por-cluster",
+    "title": "3  Análisis Gap",
+    "section": "3.8 Visualizar forma media del gap por cluster",
+    "text": "3.8 Visualizar forma media del gap por cluster\n\nlibrary(ggplot2)\n\nGshape_df &lt;- as.data.frame(Gshape)\nGshape_df$Competitor &lt;- rownames(Gshape)\nGshape_df$cluster &lt;- factor(clusters_gap)\n\nGshape_long &lt;- Gshape_df %&gt;%\n  pivot_longer(cols = -c(Competitor, cluster),\n               names_to = \"dist_m\",\n               values_to = \"z_gap\") %&gt;%\n  mutate(dist_m = as.numeric(dist_m))\n\ncluster_mean_gap &lt;- Gshape_long %&gt;%\n  group_by(cluster, dist_m) %&gt;%\n  summarise(z_mean = mean(z_gap), .groups = \"drop\")\n\nggplot(cluster_mean_gap,\n       aes(x = dist_m, y = z_mean, color = cluster)) +\n  geom_line(linewidth = 1.4) +\n  geom_point(size = 2) +\n  labs(\n    title = \"Forma media de la evolución del gap\",\n    subtitle = \"z-score por corredor (forma, no magnitud)\",\n    x = \"Distancia (m)\",\n    y = \"z-score del gap\"\n  ) +\n  theme_minimal()",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Análisis Gap</span>"
+    ]
+  },
+  {
+    "objectID": "gap.html#interpretación",
+    "href": "gap.html#interpretación",
+    "title": "3  Análisis Gap",
+    "section": "3.9 Interpretación",
+    "text": "3.9 Interpretación\nCon esta normalización:\n\nCurva creciente → el corredor se va descolgando progresivamente.\nCurva decreciente → recorta distancia respecto a su media (remontador).\nCurva plana → mantiene posición relativa.\nPico al final → pierde mucho al final.\nValle al final → ataque final.\n\nEste enfoque:\n\nAgrupa por patrón temporal\nEs independiente del nivel absoluto\nEs comparable entre carreras\n\nPero la distancia Euclídea penaliza desfases temporales. Si un corredor pierde contacto 200 m más tarde que otro, pueden parecer distintos aunque la dinámica sea similar. Si se busca algo más sofisticado para series temporales reales, la siguiente mejora sería usar DTW (Dynamic Time Warping) en lugar de dist().",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Análisis Gap</span>"
+    ]
+  },
+  {
+    "objectID": "gap.html#generar-etiquetas",
+    "href": "gap.html#generar-etiquetas",
+    "title": "3  Análisis Gap",
+    "section": "3.10 Generar Etiquetas",
+    "text": "3.10 Generar Etiquetas\nQueremos distinguir dinámicas como:\n🟢 Se mantiene estable\n🔴 Se descuelga progresivamente\n🔵 Remonta progresivamente\n🟠 Se hunde al final\n🟣 Ataque final\n⚪ Dinámica mixta\n\n3.10.1 Calcular métricas sobre la forma media de cada cluster\n\ncluster_summary_gap &lt;- cluster_mean_gap %&gt;%\n  group_by(cluster) %&gt;%\n  summarise(\n    # pendiente global (últimos 500m - primeros 500m)\n    slope = mean(z_mean[dist_m &gt;= 1100]) -\n            mean(z_mean[dist_m &lt;= 500]),\n    \n    # comportamiento final\n    final_segment = mean(z_mean[dist_m &gt;= 1300]),\n    \n    # comportamiento inicial\n    early_segment = mean(z_mean[dist_m &lt;= 300]),\n    \n    # variabilidad interna del perfil\n    variability = sd(z_mean),\n    \n    .groups = \"drop\"\n  )\n\ncluster_summary_gap\n\n# A tibble: 3 × 5\n  cluster  slope final_segment early_segment variability\n  &lt;fct&gt;    &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;       &lt;dbl&gt;\n1 1        1.55          1.72         -0.609       0.979\n2 2       -0.668         0.340         0.355       0.836\n3 3       -1.96         -0.865         1.57        1    \n\n\n\n\n3.10.2 Generar etiquetas autoajustadas (percentiles relativos entre clusters)\nEn lugar de usar números fijos, usamos cuantiles entre clusters.\n\n# Umbrales relativos\nslope_pos  &lt;- quantile(cluster_summary_gap$slope, 0.75)\nslope_neg  &lt;- quantile(cluster_summary_gap$slope, 0.25)\nfinal_pos  &lt;- quantile(cluster_summary_gap$final_segment, 0.75)\nfinal_neg  &lt;- quantile(cluster_summary_gap$final_segment, 0.25)\nvar_low    &lt;- quantile(cluster_summary_gap$variability, 0.30)\n\ncluster_summary_gap &lt;- cluster_summary_gap %&gt;%\n  mutate(label = case_when(\n    \n    slope &gt;= slope_pos ~ \"Se descuelga progresivamente\",\n    \n    slope &lt;= slope_neg ~ \"Remonta progresivamente\",\n    \n    final_pos &lt;= final_segment & slope &gt;= 0 ~ \"Colapso final\",\n    \n    final_neg &gt;= final_segment & slope &lt;= 0 ~ \"Ataque final\",\n    \n    abs(slope) &lt; median(abs(slope)) & variability &lt;= var_low ~ \"Posición estable\",\n    \n    TRUE ~ \"Dinámica mixta\"\n  ))\n\ncluster_summary_gap\n\n# A tibble: 3 × 6\n  cluster  slope final_segment early_segment variability label                  \n  &lt;fct&gt;    &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;                  \n1 1        1.55          1.72         -0.609       0.979 Se descuelga progresiv…\n2 2       -0.668         0.340         0.355       0.836 Posición estable       \n3 3       -1.96         -0.865         1.57        1     Remonta progresivamente\n\n\n\n\n3.10.3 Propagar etiqueta a cada corredor\n\nres_gap_labeled &lt;- res_gap %&gt;%\n  left_join(\n    cluster_summary_gap %&gt;%\n      select(cluster, label),\n    by = c(\"cluster_gap\" = \"cluster\")\n  )\n\nres_gap_labeled\n\n            Competitor cluster_gap                        label\n1     Agathe Guillemot           1 Se descuelga progresivamente\n2      Elle St. Pierre           1 Se descuelga progresivamente\n3         Gudaf Tsegay           1 Se descuelga progresivamente\n4  Klaudia Kazimierska           1 Se descuelga progresivamente\n5          Nikki Hiltz           1 Se descuelga progresivamente\n6   Susan Lokayo Ejore           1 Se descuelga progresivamente\n7       Águeda Marqués           1 Se descuelga progresivamente\n8       Diribe Welteji           2             Posición estable\n9  Georgia Hunter Bell           2             Posición estable\n10        Jessica Hull           2             Posición estable\n11          Laura Muir           2             Posición estable\n12      Faith Kipyegon           3      Remonta progresivamente\n\nsaveRDS(res_gap_labeled, \"data/res_gap_labeled.rds\")\n\n\n\n3.10.4 Interpretación de etiquetas\n\nSe descuelga progresivamente: Va perdiendo metros de forma sostenida.\nRemonta progresivamente: Recorta metros respecto al líder a lo largo de la carrera.\nColapso final: Se mantiene razonablemente estable pero pierde mucho en los últimos 200–300m.\nAtaque final: Recorta metros claramente en el tramo final.\nPosición estable: Gap prácticamente constante.\nDinámica mixta: No encaja claramente en ninguno de los patrones anteriores.\n\nEstas etiquetas:\n\nSon relativas a la carrera concreta\nNo usan valores arbitrarios fijos\nSon coherentes con el clustering\nDependen del número de clusters.\n\n\nlibrary(ggplot2)\nlibrary(dplyr)\nlibrary(tidyr)\n\n# Aseguramos que tenemos:\n# - Gshape (matriz normalizada del gap)\n# - clusters_gap\n# - cluster_summary_gap con columna 'label'\n\n# Convertimos a formato largo\nGshape_df &lt;- as.data.frame(Gshape)\nGshape_df$Competitor &lt;- rownames(Gshape)\nGshape_df$cluster &lt;- factor(clusters_gap)\n\nGshape_long &lt;- Gshape_df %&gt;%\n  pivot_longer(cols = -c(Competitor, cluster),\n               names_to = \"dist_m\",\n               values_to = \"z_gap\") %&gt;%\n  mutate(dist_m = as.numeric(dist_m))\n\n# Media por cluster\ncluster_mean_gap &lt;- Gshape_long %&gt;%\n  group_by(cluster, dist_m) %&gt;%\n  summarise(z_mean = mean(z_gap), .groups = \"drop\")\n\n# Unimos etiquetas\ncluster_labels &lt;- cluster_summary_gap %&gt;%\n  select(cluster, label)\n\n# Iteramos por cluster\nfor (cl in levels(Gshape_long$cluster)) {\n\n  label_text &lt;- cluster_labels$label[cluster_labels$cluster == cl]\n\n  p &lt;- ggplot() +\n    # líneas individuales\n    geom_line(\n      data = filter(Gshape_long, cluster == cl),\n      aes(x = dist_m, y = z_gap, group = Competitor),\n      color = \"grey70\",\n      alpha = 0.5\n    ) +\n    # media del cluster\n    geom_line(\n      data = filter(cluster_mean_gap, cluster == cl),\n      aes(x = dist_m, y = z_mean),\n      linewidth = 1.5\n    ) +\n    labs(\n      title = paste(\"Cluster\", cl, \"-\", label_text),\n      subtitle = \"Forma de la evolución del gap (z-score)\",\n      x = \"Distancia (m)\",\n      y = \"z-score del gap\"\n    ) +\n    theme_minimal(base_size = 13)\n\n  print(p)\n}",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Análisis Gap</span>"
+    ]
+  },
+  {
+    "objectID": "fusion.html",
+    "href": "fusion.html",
+    "title": "4  Fusión",
+    "section": "",
+    "text": "4.1 Tabla cruzada\nlibrary(dplyr)\n\ncompare_labels &lt;- strategy_metrics %&gt;%\n  select(Competitor, pacing_label = label) %&gt;%\n  left_join(\n    res_gap_labeled %&gt;%\n      select(Competitor, gap_label = label),\n    by = \"Competitor\"\n  )\n\ncompare_labels\n\n            Competitor            pacing_label                    gap_label\n1       Faith Kipyegon       Kick final fuerte      Remonta progresivamente\n2         Jessica Hull        Estrategia mixta             Posición estable\n3  Georgia Hunter Bell       Kick final fuerte             Posición estable\n4       Diribe Welteji        Estrategia mixta             Posición estable\n5           Laura Muir       Kick final fuerte             Posición estable\n6   Susan Lokayo Ejore Salida rápida, se apaga Se descuelga progresivamente\n7          Nikki Hiltz Salida rápida, se apaga Se descuelga progresivamente\n8      Elle St. Pierre Salida rápida, se apaga Se descuelga progresivamente\n9     Agathe Guillemot Salida rápida, se apaga Se descuelga progresivamente\n10 Klaudia Kazimierska Salida rápida, se apaga Se descuelga progresivamente\n11      Águeda Marqués Salida rápida, se apaga Se descuelga progresivamente\n12        Gudaf Tsegay Salida rápida, se apaga Se descuelga progresivamente\nTabla de contingencia:\ntable_labels &lt;- table(compare_labels$pacing_label,\n                      compare_labels$gap_label)\n\ntable_labels\n\n                         \n                          Posición estable Remonta progresivamente\n  Estrategia mixta                       2                       0\n  Kick final fuerte                      2                       1\n  Salida rápida, se apaga                0                       0\n                         \n                          Se descuelga progresivamente\n  Estrategia mixta                                   0\n  Kick final fuerte                                  0\n  Salida rápida, se apaga                            7\n\nprop.table(table_labels, margin = 1)\n\n                         \n                          Posición estable Remonta progresivamente\n  Estrategia mixta               1.0000000               0.0000000\n  Kick final fuerte              0.6666667               0.3333333\n  Salida rápida, se apaga        0.0000000               0.0000000\n                         \n                          Se descuelga progresivamente\n  Estrategia mixta                           0.0000000\n  Kick final fuerte                          0.0000000\n  Salida rápida, se apaga                    1.0000000",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Fusión</span>"
+    ]
+  },
+  {
+    "objectID": "fusion.html#visualización",
+    "href": "fusion.html#visualización",
+    "title": "4  Fusión",
+    "section": "4.2 Visualización",
+    "text": "4.2 Visualización\n\nlibrary(ggplot2)\n\nheat_df &lt;- as.data.frame(table_labels)\ncolnames(heat_df) &lt;- c(\"Pacing\", \"Gap\", \"Count\")\n\nggplot(heat_df, aes(x = Gap, y = Pacing, fill = Count)) +\n  geom_tile() +\n  geom_text(aes(label = Count)) +\n  scale_fill_gradient(low = \"white\", high = \"steelblue\") +\n  labs(\n    title = \"Cruce: Pacing interno vs Dinámica competitiva\",\n    x = \"Dinámica del gap\",\n    y = \"Pacing interno\"\n  ) +\n  theme_minimal() +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1))",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Fusión</span>"
+    ]
+  },
+  {
+    "objectID": "fusion.html#interpretación",
+    "href": "fusion.html#interpretación",
+    "title": "4  Fusión",
+    "section": "4.3 Interpretación",
+    "text": "4.3 Interpretación\nCaso 1 — Coincidencia fuerte:\nSi “Kick final fuerte” (pacing) coincide mayoritariamente con “Ataque final” (gap):\n→ La estrategia interna se traduce en ventaja competitiva.\nCaso 2 — Desacople\nSi muchos “Salida rápida, se apaga” terminan en “Se descuelga progresivamente”:\n→ Estrategia agresiva insostenible.\nCaso 3 — Estrategia no determinante\nSi “Ritmo constante” se reparte entre varias dinámicas del gap:\n→ El pacing interno no explica totalmente el resultado competitivo.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Fusión</span>"
+    ]
+  },
+  {
+    "objectID": "fusion.html#gráfico-tipo-sankey-pacing-gap",
+    "href": "fusion.html#gráfico-tipo-sankey-pacing-gap",
+    "title": "4  Fusión",
+    "section": "4.4 Gráfico tipo Sankey (pacing → gap)",
+    "text": "4.4 Gráfico tipo Sankey (pacing → gap)\nNecesitamos una tabla de flujos.\n\nlibrary(dplyr)\n\nfusion_df &lt;- strategy_metrics %&gt;%\n  select(Competitor, pacing_label = label) %&gt;%\n  left_join(\n    res_gap_labeled %&gt;%\n      select(Competitor, gap_label = label),\n    by = \"Competitor\"\n  ) %&gt;%\n  left_join(\n    datos %&gt;%\n      select(Competitor, Place, Time),\n    by = \"Competitor\"\n  )\n\nfusion_df\n\n            Competitor            pacing_label                    gap_label\n1       Faith Kipyegon       Kick final fuerte      Remonta progresivamente\n2         Jessica Hull        Estrategia mixta             Posición estable\n3  Georgia Hunter Bell       Kick final fuerte             Posición estable\n4       Diribe Welteji        Estrategia mixta             Posición estable\n5           Laura Muir       Kick final fuerte             Posición estable\n6   Susan Lokayo Ejore Salida rápida, se apaga Se descuelga progresivamente\n7          Nikki Hiltz Salida rápida, se apaga Se descuelga progresivamente\n8      Elle St. Pierre Salida rápida, se apaga Se descuelga progresivamente\n9     Agathe Guillemot Salida rápida, se apaga Se descuelga progresivamente\n10 Klaudia Kazimierska Salida rápida, se apaga Se descuelga progresivamente\n11      Águeda Marqués Salida rápida, se apaga Se descuelga progresivamente\n12        Gudaf Tsegay Salida rápida, se apaga Se descuelga progresivamente\n   Place     Time\n1      1 03:51:00\n2      2 03:52:00\n3      3 03:52:00\n4      4 03:52:00\n5      5 03:53:00\n6      6 03:56:00\n7      7 03:56:00\n8      8 03:57:00\n9      9 03:59:00\n10    10 04:00:00\n11    11 04:00:00\n12    12 04:01:00\n\nflow_data &lt;- fusion_df %&gt;%\n  count(pacing_label, gap_label)\n\n\nlibrary(dplyr)\nlibrary(ggplot2)\nlibrary(ggalluvial)\nlibrary(stringr)\nlibrary(ggrepel)\n\n# flow_data debe ser: pacing_label, gap_label, n\n# Si no lo tienes:\n# flow_data &lt;- fusion_df %&gt;% count(pacing_label, gap_label, name = \"n\")\n\n# 1) Abreviar etiquetas (ajusta a tu gusto)\nshort_label &lt;- function(x, width = 18) str_wrap(x, width = width)\n\nflow_plot &lt;- flow_data %&gt;%\n  mutate(\n    pacing_s = short_label(pacing_label, 16),\n    gap_s    = short_label(gap_label, 16)\n  )\n\n# 2) Ordenar niveles para mejorar lectura (ejemplo: por total descendente)\npacing_order &lt;- flow_plot %&gt;%\n  group_by(pacing_s) %&gt;%\n  summarise(total = sum(n), .groups = \"drop\") %&gt;%\n  arrange(desc(total)) %&gt;%\n  pull(pacing_s)\n\ngap_order &lt;- flow_plot %&gt;%\n  group_by(gap_s) %&gt;%\n  summarise(total = sum(n), .groups = \"drop\") %&gt;%\n  arrange(desc(total)) %&gt;%\n  pull(gap_s)\n\nflow_plot &lt;- flow_plot %&gt;%\n  mutate(\n    pacing_s = factor(pacing_s, levels = pacing_order),\n    gap_s    = factor(gap_s, levels = gap_order)\n  )\n\n# 3) Plot\nggplot(flow_plot,\n       aes(axis1 = pacing_s, axis2 = gap_s, y = n)) +\n  geom_alluvium(aes(fill = pacing_s), width = 0.18, alpha = 0.8, color = \"grey35\") +\n  geom_stratum(width = 0.22, fill = \"grey92\", color = \"grey30\") +\n  # Conteos en los flujos (centro)\n  geom_text(stat = \"alluvium\", aes(label = n),\n            size = 4, color = \"black\", alpha = 0.9) +\n  # Etiquetas de estratos (wrap)\n  geom_text(stat = \"stratum\", aes(label = after_stat(stratum)),\n            size = 4, lineheight = 0.95) +\n  scale_x_discrete(limits = c(\"Pacing interno\", \"Dinámica del gap\"),\n                   expand = c(.06, .06)) +\n  guides(fill = guide_legend(title = \"Pacing (abreviado)\")) +\n  labs(\n    title = \"Flujo entre tipologías: pacing interno vs dinámica del gap\",\n    y = \"Número de corredores\"\n  ) +\n  theme_minimal(base_size = 13) +\n  theme(\n    legend.position = \"bottom\",\n    panel.grid.major.x = element_blank(),\n    panel.grid.minor = element_blank()\n  )\n\n\n\n\n\n\n\n\nInterpretación:\n\nFlujo ancho → transición frecuente.\nSi muchas categorías confluyen en una → esa dimensión domina.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Fusión</span>"
+    ]
+  },
+  {
+    "objectID": "fusion.html#podium",
+    "href": "fusion.html#podium",
+    "title": "4  Fusión",
+    "section": "4.5 Podium",
+    "text": "4.5 Podium\n¿Qué tipología está asociada al podio?\nCreamos variable binaria:\n\nfusion_df &lt;- fusion_df %&gt;%\n  mutate(podium = ifelse(Place &lt;= 3, 1, 0))\n\nAsociación simple (proporción de podio por tipología)\nPacing interno:\n\nfusion_df %&gt;%\n  group_by(pacing_label) %&gt;%\n  summarise(\n    prop_podium = mean(podium),\n    n = n()\n  ) %&gt;%\n  arrange(desc(prop_podium))\n\n# A tibble: 3 × 3\n  pacing_label            prop_podium     n\n  &lt;chr&gt;                         &lt;dbl&gt; &lt;int&gt;\n1 Kick final fuerte             0.667     3\n2 Estrategia mixta              0.5       2\n3 Salida rápida, se apaga       0         7\n\n\nGap competitivo\n\nfusion_df %&gt;%\n  group_by(gap_label) %&gt;%\n  summarise(\n    prop_podium = mean(podium),\n    n = n()\n  ) %&gt;%\n  arrange(desc(prop_podium))\n\n# A tibble: 3 × 3\n  gap_label                    prop_podium     n\n  &lt;chr&gt;                              &lt;dbl&gt; &lt;int&gt;\n1 Remonta progresivamente              1       1\n2 Posición estable                     0.5     4\n3 Se descuelga progresivamente         0       7\n\n\nTest estadístico\n\nchisq.test(table(fusion_df$pacing_label, fusion_df$podium))\n\n\n    Pearson's Chi-squared test\n\ndata:  table(fusion_df$pacing_label, fusion_df$podium)\nX-squared = 5.7778, df = 2, p-value = 0.05564\n\nchisq.test(table(fusion_df$gap_label, fusion_df$podium))\n\n\n    Pearson's Chi-squared test\n\ndata:  table(fusion_df$gap_label, fusion_df$podium)\nX-squared = 6.6667, df = 2, p-value = 0.03567\n\n\n¿Qué dimensión explica mejor la posición final?\nUsamos regresión lineal sobre Place.\nModelo 1 — Solo pacing\n\nm1 &lt;- lm(Place ~ pacing_label, data = fusion_df)\nsummary(m1)\n\n\nCall:\nlm(formula = Place ~ pacing_label, data = fusion_df)\n\nResiduals:\n   Min     1Q Median     3Q    Max \n -3.00  -1.25   0.00   1.25   3.00 \n\nCoefficients:\n                                    Estimate Std. Error t value Pr(&gt;|t|)   \n(Intercept)                            3.000      1.453   2.065  0.06895 . \npacing_labelKick final fuerte          0.000      1.876   0.000  1.00000   \npacing_labelSalida rápida, se apaga    6.000      1.648   3.642  0.00539 **\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nResidual standard error: 2.055 on 9 degrees of freedom\nMultiple R-squared:  0.7343,    Adjusted R-squared:  0.6752 \nF-statistic: 12.43 on 2 and 9 DF,  p-value: 0.00257\n\n\nModelo 2 — Solo gap\n\nm2 &lt;- lm(Place ~ gap_label, data = fusion_df)\nsummary(m2)\n\n\nCall:\nlm(formula = Place ~ gap_label, data = fusion_df)\n\nResiduals:\n   Min     1Q Median     3Q    Max \n-3.000 -1.125  0.000  1.125  3.000 \n\nCoefficients:\n                                      Estimate Std. Error t value Pr(&gt;|t|)   \n(Intercept)                             3.5000     0.9574   3.656  0.00527 **\ngap_labelRemonta progresivamente       -2.5000     2.1409  -1.168  0.27291   \ngap_labelSe descuelga progresivamente   5.5000     1.2002   4.583  0.00132 **\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nResidual standard error: 1.915 on 9 degrees of freedom\nMultiple R-squared:  0.7692,    Adjusted R-squared:  0.7179 \nF-statistic:    15 on 2 and 9 DF,  p-value: 0.001362\n\n\nModelo 3 — Ambos\n\nm3 &lt;- lm(Place ~ pacing_label + gap_label, data = fusion_df)\nsummary(m3)\n\n\nCall:\nlm(formula = Place ~ pacing_label + gap_label, data = fusion_df)\n\nResiduals:\n   Min     1Q Median     3Q    Max \n    -3     -1      0      1      3 \n\nCoefficients: (1 not defined because of singularities)\n                                      Estimate Std. Error t value Pr(&gt;|t|)   \n(Intercept)                              3.000      1.414   2.121  0.06669 . \npacing_labelKick final fuerte            1.000      2.000   0.500  0.63054   \npacing_labelSalida rápida, se apaga      6.000      1.604   3.742  0.00569 **\ngap_labelRemonta progresivamente        -3.000      2.449  -1.225  0.25551   \ngap_labelSe descuelga progresivamente       NA         NA      NA       NA   \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nResidual standard error: 2 on 8 degrees of freedom\nMultiple R-squared:  0.7762,    Adjusted R-squared:  0.6923 \nF-statistic:  9.25 on 3 and 8 DF,  p-value: 0.00559\n\n\nComparación objetiva\n\nAIC(m1, m2, m3)\n\n   df      AIC\nm1  4 55.88668\nm2  4 54.19374\nm3  5 55.82448\n\n\n\nMenor AIC → mejor capacidad explicativa.\n\nTambién comparamos R²:\n\nsummary(m1)$r.squared\n\n[1] 0.7342657\n\nsummary(m2)$r.squared\n\n[1] 0.7692308\n\nsummary(m3)$r.squared\n\n[1] 0.7762238\n\n\nInterpretación esperable\nSi ocurre esto:\n\nGap tiene mayor R² que pacing → la dinámica competitiva explica mejor el resultado.\nAmbos juntos mejoran → ambas dimensiones aportan información distinta.\nPacing no significativo pero gap sí → la táctica relativa pesa más que el patrón interno.\n\nOjo Place es ordinal, no continuo. Más correcto sería:\n\nlibrary(MASS)\npolr(as.factor(Place) ~ pacing_label + gap_label, data = fusion_df, Hess = TRUE)\n\nCall:\npolr(formula = as.factor(Place) ~ pacing_label + gap_label, data = fusion_df, \n    Hess = TRUE)\n\nCoefficients:\n      pacing_labelKick final fuerte pacing_labelSalida rápida, se apaga \n                           1.674338                           19.734426 \n   gap_labelRemonta progresivamente \n                         -17.159530 \n\nIntercepts:\n       1|2        2|3        3|4        4|5        5|6        6|7        7|8 \n-8.4243696 -0.3185000  0.8374098  1.9932351 10.1328328 17.9498527 18.8250758 \n       8|9       9|10      10|11      11|12 \n19.4535987 20.0289238 20.6575240 21.5329828 \n\nResidual Deviance: 37.51882 \nAIC: 65.51882 \nWarning: did not converge as iteration limit reached\n\n\nPero con muestras pequeñas, cuidado con sobreinterpretar.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Fusión</span>"
+    ]
+  },
+  {
+    "objectID": "next.html",
+    "href": "next.html",
+    "title": "5  Preguntas abiertas",
+    "section": "",
+    "text": "5.1 Preguntas abiertas y extensiones del análisis\nHasta este punto el análisis se ha centrado en una carrera individual, tratando de capturar dos dimensiones complementarias:\nEste enfoque permite describir y agrupar patrones estratégicos dentro de una prueba concreta. Sin embargo, una carrera es solo una observación dentro de un proceso competitivo más amplio. Cuando se dispone de múltiples pruebas a lo largo del tiempo, con corredores que se repiten y rivales que cambian, el problema se vuelve necesariamente longitudinal e interactivo.\nLa pregunta deja de ser únicamente:\ny pasa a ser:\nEn este capítulo se recogen preguntas abiertas y, especialmente, una propuesta práctica para extender el análisis a múltiples carreras mediante etiquetado automático de pruebas. La idea, que aquí dejamos abierta como posibilidad de trabajo futuro, es pasar de “etiquetar corredores” a “etiquetar carreras” y estudiar relaciones entre resultados, estilos individuales y composición del campo de rivales.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preguntas abiertas</span>"
+    ]
+  },
+  {
+    "objectID": "next.html#preguntas-abiertas-y-extensiones-del-análisis",
+    "href": "next.html#preguntas-abiertas-y-extensiones-del-análisis",
+    "title": "5  Preguntas abiertas",
+    "section": "",
+    "text": "Pacing interno: cómo distribuye cada atleta su esfuerzo a lo largo de la carrera.\nDinámica competitiva: cómo evoluciona la separación respecto a la cabeza de carrera.\n\n\n\n\n¿Qué patrón explica esta carrera?\n\n\n\n¿Qué patrón caracteriza a un atleta a lo largo del tiempo?\n¿Cambia ese patrón o permanece inalterado? ¿Qué tipo de carrera favorece determinados perfiles?\n¿Cómo interactúan los estilos entre sí y con el contexto competitivo?",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preguntas abiertas</span>"
+    ]
+  },
+  {
+    "objectID": "next.html#del-análisis-puntual-al-análisis-longitudinal",
+    "href": "next.html#del-análisis-puntual-al-análisis-longitudinal",
+    "title": "5  Preguntas abiertas",
+    "section": "5.2 Del análisis puntual al análisis longitudinal",
+    "text": "5.2 Del análisis puntual al análisis longitudinal\nSi analizamos varias carreras donde:\n\nse repiten corredores,\ncambian rivales,\ncambia el contexto (ritmo alto, carrera táctica, final cerrado, ruptura temprana, etc.),\n\npodemos estudiar dimensiones que no aparecen en una sola prueba:\n\nEstabilidad estratégica: si un atleta mantiene su patrón o cambia según contexto.\nTipologías de carrera: si existen “arquetipos” de prueba con estructuras repetibles.\nInteracciones: si el rendimiento depende del perfil del atleta y del tipo de rivales/carrera.\n\nEsto abre líneas de trabajo interesantes:\n\nMatrices de transición de etiquetas por atleta (qué perfiles son “estables” vs “adaptativos”).\nModelos con interacción perfil_atleta × tipo_carrera.\nPredicción: dado el grupo de atletas en línea de salida (estilos presentes), ¿se puede anticipar la estructura probable de la carrera?",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preguntas abiertas</span>"
+    ]
+  },
+  {
+    "objectID": "next.html#etiquetar-carreras-automáticamente",
+    "href": "next.html#etiquetar-carreras-automáticamente",
+    "title": "5  Preguntas abiertas",
+    "section": "5.3 Etiquetar carreras automáticamente",
+    "text": "5.3 Etiquetar carreras automáticamente\nUna forma natural de extender el análisis es construir, para cada carrera, un conjunto de métricas agregadas (un “vector de características”) y usarlo para:\n\nDefinir etiquetas mediante reglas interpretables (heurísticas basadas en percentiles).\n\nAgrupar carreras automáticamente con clustering (igual que se ha hecho con corredores).\n\nRelacionar el tipo de carrera con el resultado de atletas concretos y con la composición del campo.\n\nEl objetivo no es solo clasificar carreras, sino responder preguntas como:\n\n¿Qué perfiles de atleta rinden mejor en carreras con kick colectivo?\n¿Un corredor con “kick final fuerte” obtiene más podios cuando la carrera es táctica?\n¿Cambian los resultados de un atleta según el tipo de rivales presentes?\n\nA continuación se proponen métricas concretas para etiquetar carreras con los datos disponibles (splits cada 100m y series derivadas como gap).",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preguntas abiertas</span>"
+    ]
+  },
+  {
+    "objectID": "next.html#métricas-propuestas-para-etiquetar-carreras",
+    "href": "next.html#métricas-propuestas-para-etiquetar-carreras",
+    "title": "5  Preguntas abiertas",
+    "section": "5.4 Métricas propuestas para etiquetar carreras",
+    "text": "5.4 Métricas propuestas para etiquetar carreras\n\n5.4.1 Ritmo global de la carrera (nivel absoluto)\nEstas métricas distinguen entre pruebas “rápidas” y pruebas más tácticas (lentas o irregulares), y cuantifican la competitividad general del campo.\n\nTiempo ganador (T_win): tiempo final del atleta con Place = 1.\nTiempo medio / mediana (T_mean, T_med): resumen del nivel del grupo.\nDensidad del campo:\n\nIQR_Time (Q3–Q1 del tiempo final).\nRange_Time (máx–mín del tiempo final).\n\nAsimetría por mitades (si se reconstruyen acumulados):\n\ndiferencia entre primera mitad y segunda mitad (a nivel de carrera o porcentaje de corredores con “negative split”).\n\n\nInterpretación:\n\ncarreras rápidas suelen tener T_win bajo y, en ciertos contextos, un campo más selectivo (mayor dispersión final).\ncarreras tácticas pueden concentrar tiempos y depender más del final.\n\nNota: aquí no se tienen en cuenta variables de dispersión, pero deberían considerarse.\n\n\n\n5.4.2 Forma del pacing agregado (cómo se corre la prueba)\nAquí interesa la estructura temporal del ritmo: si la carrera acelera, desacelera o presenta un cambio brusco.\nA partir de splits incrementales (tiempo por 100m):\n\nPerfil medio de splits (vector de 15 valores): mean_split_100…mean_split_1500.\nPendiente del ritmo (inicio → final):\n\nslope_mean = mean(últimos 500m) - mean(primeros 500m).\n\nKick colectivo:\n\nkick_group = mean(últimos 300m) - mean(parte central, p.ej. 600–900m).\n\nVariabilidad del ritmo de la carrera:\n\nsd_mean_profile: desviación estándar del perfil medio.\nmean_within_runner_sd: promedio de la variabilidad individual (mide “caos” interno del grupo).\n\nMomento del cambio principal:\n\ndónde ocurre el descenso más fuerte del split: argmin(Δsplit) sobre el perfil medio.\n\n\nInterpretación:\n\nkick_group alto sugiere una carrera resuelta en el tramo final.\nPendiente positiva (últimos tramos más lentos) puede indicar desgaste o falta de ataque final.\nVariabilidad alta sugiere carrera con cambios frecuentes de ritmo.\n\n\n\n\n5.4.3 Dinámica competitiva (gap): estructura del grupo y rupturas\nEstas métricas describen cómo evoluciona la separación del pelotón respecto a la cabeza.\nA partir de series gap_time_sec o gap_m por corredor y distancia:\n\nSeparación del campo en puntos clave:\n\nspread_800 = IQR(gap_time_sec en 800m)\nspread_1200 = IQR(gap_time_sec en 1200m)\nspread_finish = IQR(gap_time_sec en 1500m)\n\nMomento de ruptura (breakpoint):\n\nprimera distancia donde el spread supera un umbral relativo (autoajustado), por ejemplo:\n\nspread_d &gt; mediana(spread_temprano) + c · MAD(spread_temprano)\n\n\nFinal apretado:\n\nn_close_finish = nº corredores con gap_time_sec &lt;= 1s (o &lt;= 2s) al final.\n\nAgresividad de ataques (aproximación con datos discretos):\n\nmagnitud máxima de recorte en 100m (para cada corredor, el mínimo de Δgap), y luego agregados: media o percentiles.\n\n\nInterpretación:\n\nRuptura temprana + spread alto: carrera selectiva.\nSpread bajo hasta tarde + kick: carrera táctica con final decisivo.\nMuchos corredores dentro de 1–2s: carrera “compacta”.\n\n\n\n\n5.4.4 Métricas basadas en etiquetas de corredor (composición del pelotón)\nUna carrera puede caracterizarse por la mezcla de estilos presentes, si disponemos de etiquetas individuales:\n\nDistribución de estilos:\n\nproporción de corredores en cada etiqueta (pacing o gap).\n\nEntropía de estilos (diversidad estratégica): \\[ H = -\\sum p_i \\log(p_i) \\]\nDominancia:\n\nmax(p_i) (si un estilo domina el campo).\n\nÍndice de “choque estratégico” (opcional):\n\nproporción de combinaciones opuestas: p.ej. “salida rápida” + “kickers”.\n\n\nInterpretación:\n\nUn campo estratégico homogéneo puede inducir carreras más previsibles.\nUn campo heterogéneo puede inducir dinámica más caótica o rupturas.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preguntas abiertas</span>"
+    ]
+  },
+  {
+    "objectID": "next.html#etiquetado-autoajustado-sin-umbrales-fijos",
+    "href": "next.html#etiquetado-autoajustado-sin-umbrales-fijos",
+    "title": "5  Preguntas abiertas",
+    "section": "5.5 Etiquetado autoajustado (sin umbrales fijos)",
+    "text": "5.5 Etiquetado autoajustado (sin umbrales fijos)\nPara evitar reglas que dependan del nivel absoluto de una carrera concreta, es preferible:\n\nusar percentiles dentro de la propia carrera,\no estandarización robusta por carrera ((x - mediana)/MAD),\no reglas relativas (“top 25%”) en vez de valores fijos.\n\nEjemplos de reglas autoajustadas:\n\nCarrera con kick colectivo: kick_group en el cuartil superior de esa carrera.\nRuptura temprana: breakpoint ocurre antes que el percentil 25 de distancias de ruptura.\nCarrera compacta: spread_finish en el cuartil inferior y n_close_finish alto.\n\nVentaja: el criterio se adapta a cambios de época, nivel del meeting o condiciones externas.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preguntas abiertas</span>"
+    ]
+  },
+  {
+    "objectID": "next.html#propuesta-de-taxonomía-de-carreras-etiquetas-finales",
+    "href": "next.html#propuesta-de-taxonomía-de-carreras-etiquetas-finales",
+    "title": "5  Preguntas abiertas",
+    "section": "5.6 Propuesta de taxonomía de carreras (etiquetas finales)",
+    "text": "5.6 Propuesta de taxonomía de carreras (etiquetas finales)\nA partir de las métricas anteriores se pueden definir categorías interpretables. Por ejemplo:\n\nRápida desde el inicio\n\nT_win bajo, slope_mean pequeño, spreads moderados.\n\nTáctica con kick final\n\nkick_group alto, spreads bajos hasta tarde y aumento final.\n\nDe desgaste / ruptura temprana\n\nbreakpoint temprano, spread_800 alto, dispersión creciente.\n\nCompacta hasta meta\n\nspread_finish bajo, n_close_finish alto.\n\nCaótica / variable\n\nvariabilidad alta del perfil medio y alta variabilidad individual.\n\n\nEstas etiquetas pueden definirse por reglas autoajustadas o, alternativamente, mediante clustering de carreras.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preguntas abiertas</span>"
+    ]
+  },
+  {
+    "objectID": "next.html#pipeline-recomendado-de-carreras-a-un-dataset-analizable",
+    "href": "next.html#pipeline-recomendado-de-carreras-a-un-dataset-analizable",
+    "title": "5  Preguntas abiertas",
+    "section": "5.7 Pipeline recomendado: de carreras a un dataset analizable",
+    "text": "5.7 Pipeline recomendado: de carreras a un dataset analizable\nUna implementación práctica consistiría en:\n\nPara cada carrera (cada CSV):\n\n\nCalcular métricas de ritmo global, pacing agregado, dinámica gap y composición (si hay etiquetas individuales).\nGuardar una fila por carrera con todas las métricas.\n\n\nUnir todas las carreras en un dataset longitudinal:\n\nRaceID | Fecha | Meeting | T_win | IQR_Time | kick_group | spread_800 | breakpoint | … |\n\nEtiquetar carreras:\n\n\nPor reglas (percentiles) o clustering jerárquico.\n\n\nAnalizar interacción atleta–carrera:\n\n\nresultado ~ tipo_carrera + perfil_atleta + interacción\nEstudio de estabilidad de etiquetas por atleta en el tiempo.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preguntas abiertas</span>"
+    ]
+  },
+  {
+    "objectID": "next.html#preguntas-abiertas-para-investigación-futura",
+    "href": "next.html#preguntas-abiertas-para-investigación-futura",
+    "title": "5  Preguntas abiertas",
+    "section": "5.8 Preguntas abiertas (para investigación futura)",
+    "text": "5.8 Preguntas abiertas (para investigación futura)\n\n5.8.1 Estabilidad individual\n\n¿Qué porcentaje de corredores mantiene su etiqueta de pacing a lo largo del tiempo?\n¿Los atletas “adaptativos” (que cambian de etiqueta) obtienen mejores resultados?\n\n\n\n5.8.2 Tipologías de carrera\n\n¿Existen arquetipos de carrera reproducibles entre competiciones distintas?\n¿El tipo de carrera depende más del meeting/condiciones o de la composición de la lista de salida?\n\n\n\n5.8.3 Interacciones y contexto\n\n¿Qué perfiles rinden mejor en carreras con kick colectivo?\n¿Los resultados de un atleta dependen del tipo de rivales presentes (mezcla estratégica)?\n¿Hay combinaciones de estilos que generan sistemáticamente rupturas tempranas?\n\n\n\n5.8.4 Predicción\n\n¿Se puede anticipar el tipo de carrera antes de correrla con solo saber los perfiles inscritos?\n¿Mejora la predicción de podio si se incorporan interacción perfil × tipo_carrera?\n\n\n\n5.8.5 Explicación del rendimiento\n\n¿Qué explica mejor la posición final a largo plazo: el pacing interno o la dinámica competitiva?\n¿Hay carreras en las que el pacing interno es secundario frente a la táctica colectiva?",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preguntas abiertas</span>"
+    ]
+  },
+  {
+    "objectID": "next.html#nota-final",
+    "href": "next.html#nota-final",
+    "title": "5  Preguntas abiertas",
+    "section": "5.9 Nota final",
+    "text": "5.9 Nota final\nEste paso (pasar de una carrera a muchas) obliga a tratar la estrategia como un fenómeno:\n\nlongitudinal (cambia con el tiempo),\ninteractivo (depende de rivales),\ncontextual (depende del tipo de carrera).\n\nPor tanto, el objetivo no es solo clasificar, sino entender qué se mantiene, qué varía y qué condiciones favorecen a cada perfil competitivo.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preguntas abiertas</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#introducción",
+    "href": "index.html#introducción",
+    "title": "Análisis carreras 1500m",
+    "section": "",
+    "text": "Pacing interno: cómo distribuye cada atleta su esfuerzo a lo largo de la carrera.\nDinámica competitiva: cómo evoluciona su posición relativa respecto a la cabeza de carrera.\n\n\n\n\nLa representación adecuada de series temporales.\nLa separación entre nivel absoluto y forma dinámica.\nLa interpretación crítica de los modelos utilizados.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introducción</span>"
+    ]
+  }
+]

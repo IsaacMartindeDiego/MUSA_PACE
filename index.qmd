@@ -1,0 +1,26 @@
+---
+title: "Introducción"
+format: html
+---
+
+# Introducción
+
+El análisis del rendimiento en pruebas de 1500 metros no puede limitarse al tiempo final. Una carrera de medio fondo es una secuencia dinámica de decisiones tácticas, cambios de ritmo y posicionamiento relativo dentro del grupo. Entender estos elementos requiere ir más allá del cronómetro y estudiar la estructura temporal de la competición.
+
+En esta práctica se desarrollará un enfoque cuantitativo para analizar carreras de 1500m a partir de los *splits* cada 100 metros. El objetivo es explorar dos dimensiones complementarias:
+
+* **Pacing interno**: cómo distribuye cada atleta su esfuerzo a lo largo de la carrera.
+* **Dinámica competitiva**: cómo evoluciona su posición relativa respecto a la cabeza de carrera.
+
+A partir de estas series temporales se construirán métricas descriptivas, se aplicarán técnicas de clustering para identificar patrones estratégicos y se evaluará la relación entre dichos patrones y el resultado final.
+
+El enfoque es reproducible y basado en datos, con especial atención a:
+
+* La representación adecuada de series temporales.
+* La separación entre nivel absoluto y forma dinámica.
+* La interpretación crítica de los modelos utilizados.
+
+El propósito no es únicamente clasificar corredores, sino comprender qué tipo de dinámica está asociada a mejores resultados y hasta qué punto la estrategia interna se traduce en ventaja competitiva.
+
+---
+

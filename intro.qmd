@@ -1,0 +1,514 @@
+---
+title: "Análisis velocidad"
+format: html
+---
+
+## Objetivo y datos
+
+En este documento vamos a:
+
+-   Leer un CSV con resultados de una carrera de 1500m.
+-   Extraer los *splits* cada 100m (columnas `100m`, `200m`, ..., `1500m`).
+-   Construir representaciones comparables entre corredores.
+-   Agrupar corredores por **estrategia** (forma del pacing) con clustering jerárquico.
+-   Resumir e interpretar cada grupo y **etiquetar automáticamente** estrategias.
+
+La idea clave es separar dos conceptos:
+
+-   **Nivel de rendimiento**: quién es más rápido en términos absolutos.
+-   **Estrategia (pacing)**: cómo distribuye el esfuerzo a lo largo de la carrera (salida fuerte, ritmo constante, kick final, etc.).
+
+Para agrupar por estrategia, compararemos **la forma del perfil**, no el tiempo absoluto.
+
+## Lectura del CSV
+
+```{r setup, include=FALSE}
+source("./data_prep.R")
+```
+
+## Visualización
+
+```{r visualiza}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+split_cols <- grep("^\\d+m$", names(datos), value = TRUE)
+
+# Top 3 según la clasificación (Place 1,2,3)
+top3 <- datos %>%
+  arrange(Place) %>%
+  slice(1:3) %>%
+  pull(Competitor)
+
+splits_long <- datos %>%
+  select(Place, Competitor, all_of(split_cols)) %>%
+  pivot_longer(cols = all_of(split_cols),
+               names_to = "split",
+               values_to = "split_time") %>%
+  mutate(
+    dist_m = as.integer(sub("m$", "", split)),
+    highlight = if_else(Competitor %in% top3, Competitor, "Otros")
+  ) %>%
+  arrange(Competitor, dist_m)
+
+ggplot(splits_long,
+       aes(x = dist_m, y = split_time, group = Competitor, color = highlight)) +
+  geom_line(linewidth = 0.8, alpha = 0.75) +
+  geom_point(size = 1.3, alpha = 0.75) +
+  scale_color_manual(
+    values = c("Otros" = "grey70",
+               setNames(c("#1b9e77", "#d95f02", "#7570b3"), top3))
+  ) +
+  labs(
+    title = "Splits (tiempo por 100m) por corredor — Top 3 resaltado",
+    subtitle = "Colores: top-3 por posición final. Resto en gris.",
+    x = "Distancia (m)",
+    y = "Tiempo del split (s)",
+    color = ""
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "bottom")
+
+```
+
+Con el tiempo acumulado
+```{r tiempo_acumulado}
+
+splits_long_cum <- splits_long %>%
+  group_by(Competitor) %>%
+  mutate(cum_time = cumsum(split_time)) %>%
+  ungroup()
+
+ggplot(splits_long_cum, aes(x = dist_m, y = cum_time, group = Competitor)) +
+  geom_line(alpha = 0.6, linewidth = 0.7) +
+  labs(
+    title = "Tiempo acumulado por corredor (cada 100m)",
+    subtitle = "Curvas más bajas = corredores más rápidos en cada punto",
+    x = "Distancia (m)",
+    y = "Tiempo acumulado (s)"
+  ) +
+  theme_minimal(base_size = 13)
+
+```
+
+
+##  Selección de splits y construcción de la matriz X
+
+Los splits aparecen como columnas 100m, 200m, ... 1500m.
+Los capturamos con una expresión regular: columnas que son “número + m”.
+
+```{r splits}
+library(dplyr)
+
+split_cols <- grep("^\\d+m$", names(datos), value = TRUE)
+split_cols
+```
+
+Construimos una matriz numérica X:
+
+- Filas: corredores
+
+- Columnas: splits (cada 100m)
+
+```{r matrix_splits}
+X <- datos %>%
+  select(all_of(split_cols)) %>%
+  as.matrix()
+
+dim(X)
+```
+
+
+### Manejo simple de valores faltantes (NA)
+
+dist() no maneja bien NA. Si existieran, usamos una imputación muy simple:
+reemplazamos cada NA por la media de su columna (tramo).
+
+Esto no es “la verdad”, pero evita que el cálculo falle y suele ser aceptable si hay pocos NA.
+
+```{r NAs}
+if (anyNA(X)) {
+  col_means <- colMeans(X, na.rm = TRUE)
+  for (j in seq_len(ncol(X))) {
+    X[is.na(X[, j]), j] <- col_means[j]
+  }
+}
+
+anyNA(X)
+```
+
+
+## Distancias entre corredores: tres enfoques
+### Euclídea sobre splits “tal cual”
+
+Esta distancia mezcla velocidad absoluta + forma del pacing.
+
+```{r dist_euclidea}
+D <- as.matrix(dist(X, method = "euclidean"))
+rownames(D) <- datos$Competitor
+colnames(D) <- datos$Competitor
+
+D[1:5, 1:5]
+```
+
+
+### Distancia por “forma de pacing” (z-score por corredor)
+
+Para estudiar estrategia, queremos ignorar que uno sea globalmente más rápido que otro y fijarnos en el patrón relativo (salida / ritmo / kick).
+
+Para eso, estandarizamos cada fila (cada corredor):
+
+Restar la media de sus splits
+
+Dividir por su desviación estándar
+
+```{r dist_pace}
+row_z <- function(v) {
+  s <- sd(v, na.rm = TRUE)
+  if (is.na(s) || s == 0) return(rep(0, length(v)))
+  (v - mean(v, na.rm = TRUE)) / s
+}
+
+Xshape <- t(apply(X, 1, row_z))
+colnames(Xshape) <- split_cols
+rownames(Xshape) <- datos$Competitor
+
+D_shape <- as.matrix(dist(Xshape, method = "euclidean"))
+D_shape[1:5, 1:5]
+
+```
+
+
+
+
+
+### Distancia basada en correlación (perfiles)
+
+Si dos perfiles tienen la misma forma aunque uno sea más rápido, su correlación será alta.
+Definimos distancia como 1 - correlación.
+
+```{r Dist_corr}
+D_cor <- as.matrix(as.dist(1 - cor(t(X), use = "pairwise.complete.obs")))
+rownames(D_cor) <- datos$Competitor
+colnames(D_cor) <- datos$Competitor
+
+D_cor[1:5, 1:5]
+```
+
+## Clustering por estrategia (pacing)
+
+Aquí usamos Xshape (perfil normalizado por corredor), que es la representación más alineada con “estrategia”.
+
+#### Clustering jerárquico (Ward)
+
+Calculamos distancias euclídeas entre perfiles normalizados.
+
+Aplicamos hclust con método ward.D2.
+
+```{r hclust_ward}
+d <- dist(Xshape, method = "euclidean")
+hc <- hclust(d, method = "ward.D2")
+```
+### Elección del número de clusters con silhouette
+
+Probamos k = 2..8 y elegimos el que maximiza la silhouette media.
+
+```{r shil}
+library(cluster)
+
+k_grid <- 2:8
+sil <- sapply(k_grid, function(k) {
+  cl <- cutree(hc, k = k)
+  mean(silhouette(cl, d)[, 3])
+})
+
+k_best <- k_grid[which.max(sil)]
+k_best
+
+plot(k_grid, sil, type = "b",
+     xlab = "k (número de clusters)", ylab = "Silhouette media",
+     main = "Selección de k por silhouette")
+```
+Si quieres forzar un valor (p.ej. porque te interesa interpretabilidad), puedes hacerlo:
+
+```{r}
+k_best <- 3
+clusters <- cutree(hc, k = k_best)
+table(clusters)
+```
+### Dendrograma
+```{r plor_dendrograma}
+plot(hc, labels = datos$Competitor,
+     main = "Clustering por estrategia (pacing) - Ward.D2",
+     xlab = "", sub = "")
+rect.hclust(hc, k = k_best, border = 2:6)
+```
+
+### Representación 
+
+```{r figuras}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+# Pasar Xshape a formato largo con cluster
+Xshape_df <- as.data.frame(Xshape)
+Xshape_df$Competitor <- rownames(Xshape_df)
+Xshape_df$cluster <- factor(clusters)
+
+Xshape_long <- Xshape_df %>%
+  pivot_longer(cols = all_of(split_cols),
+               names_to = "split",
+               values_to = "z") %>%
+  mutate(dist_m = as.numeric(gsub("m", "", split)))
+
+# (Opcional) media por cluster para dibujar encima
+cluster_mean_long <- Xshape_long %>%
+  group_by(cluster, dist_m) %>%
+  summarise(z_mean = mean(z, na.rm = TRUE), .groups = "drop")
+
+# Una figura por cluster
+for (cl in levels(Xshape_long$cluster)) {
+
+  p <- ggplot(
+    data = filter(Xshape_long, cluster == cl),
+    aes(x = dist_m, y = z, group = Competitor)
+  ) +
+    geom_line(alpha = 0.6, linewidth = 0.7) +
+    geom_line(
+      data = filter(cluster_mean_long, cluster == cl),
+      aes(x = dist_m, y = z_mean, group = 1),
+      linewidth = 1.4
+    ) +
+    labs(
+      title = paste("Perfiles normalizados (Xshape) - Cluster", cl),
+      subtitle = "Líneas finas: corredores. Línea gruesa: media del cluster.",
+      x = "Distancia (m)",
+      y = "z-score del split"
+    ) +
+    theme_minimal()
+
+  print(p)
+}
+
+```
+
+Cada línea fina corresponde a un corredor del cluster (perfil normalizado). Línea gruesa = perfil medio del cluster (tendencia típica).
+
+Como son z-scores:
+
+- valores negativos suelen indicar tramos relativamente más rápidos (menor tiempo por 100m),
+
+- valores positivos tramos relativamente más lentos.
+
+### Tabla corredor → cluster
+```{r tabla_corredor_cluster}
+res <- datos %>%
+  transmute(
+    Competitor,
+    Place,
+    Time,
+    cluster = factor(clusters)
+  ) %>%
+  arrange(cluster, Place)
+
+print(res, n = 50)
+```
+
+## Interpretación: perfil medio por cluster
+
+Para entender qué caracteriza cada grupo, calculamos el perfil medio del cluster (pero en la escala normalizada Xshape, es decir, forma de pacing).
+```{r perfil_medio}
+library(tidyr)
+
+profile <- as.data.frame(Xshape)
+profile$cluster <- factor(clusters)
+
+cluster_mean <- profile %>%
+  group_by(cluster) %>%
+  summarise(across(all_of(split_cols), mean), .groups = "drop")
+
+cluster_mean
+```
+
+
+### Gráfico: perfil medio por cluster
+
+Este gráfico ayuda a visualizar “dónde” acelera o afloja cada cluster.
+
+Interpretación de signos (en z-score):
+
+- Valores negativos: tramo relativamente más rápido (menor tiempo por 100m) respecto a la media del corredor.
+
+- Valores positivos: tramo relativamente más lento.
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+cluster_mean_long <- cluster_mean %>%
+  pivot_longer(cols = all_of(split_cols),
+               names_to = "split",
+               values_to = "z") %>%
+  mutate(dist_m = as.numeric(gsub("m", "", split)))
+
+ggplot(cluster_mean_long,
+       aes(x = dist_m, y = z, color = cluster, group = cluster)) +
+  geom_line(linewidth = 1.4) +
+  geom_point(size = 2) +
+  scale_color_brewer(palette = "Dark2") +
+  labs(
+    title = "Perfil medio normalizado por cluster",
+    subtitle = "Valores negativos = tramo relativamente más rápido",
+    x = "Distancia (m)",
+    y = "z-score del split",
+    color = "Cluster"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(face = "bold")
+  )
+
+```
+
+
+## Heatmap de Xshape (perfiles normalizados)
+
+Un heatmap permite ver, corredor por corredor, su patrón relativo de pacing.
+
+- Filas: corredores
+
+- Columnas: splits (100m...1500m)
+
+- Color: z-score del split (más lento vs más rápido respecto a su propia media)
+
+Para mejorar la lectura, ordenamos las filas según el dendrograma del clustering.
+
+```{r heat}
+# Orden de hojas del dendrograma
+ord <- hc$order
+
+Xshape_ord <- Xshape[ord, , drop = FALSE]
+clusters_ord <- clusters[ord]
+
+# Heatmap base R: desactivamos clustering interno porque ya ordenamos
+heatmap(Xshape_ord,
+        Rowv = NA, Colv = NA,
+        scale = "none",
+        labRow = rownames(Xshape_ord),
+        labCol = colnames(Xshape_ord),
+        main = "Heatmap perfiles Xshape (ordenado por clustering)",
+        xlab = "Split (m)",
+        ylab = "Corredor")
+
+```
+
+El heatmap base R usa una paleta por defecto. Si prefieres controlar colores o anotar clusters por el lateral, se puede hacer con paquetes como pheatmap o ComplexHeatmap, pero aquí evitamos dependencias extra.
+
+## Etiquetado automático de estrategias
+
+A continuación definimos métricas simples (pero interpretables) para “nombrar” estrategias.
+
+### Métricas de estrategia
+
+Usamos Xshape (z-score por corredor). Definimos:
+
+- slope: promedio (últimos 400m) − promedio (primeros 400m).
+
+- Negativo: tiende a ir a más (negative split).
+
+- Positivo: tiende a perder ritmo.
+
+- kick: promedio últimos 300m (1300–1500). Negativo suele indicar kick (más - rápido al final).
+
+- fast_start: promedio primeros 200m (100–200). Negativo suele indicar salida agresiva.
+
+- variability: desviación estándar del perfil (irregularidad).
+
+```{r estr}
+early_idx  <- split_cols %in% c("100m","200m","300m","400m")
+late_idx   <- split_cols %in% c("1200m","1300m","1400m","1500m")
+kick_idx   <- split_cols %in% c("1300m","1400m","1500m")
+start_idx  <- split_cols %in% c("100m","200m")
+
+strategy_metrics <- data.frame(
+  Competitor = rownames(Xshape),
+  cluster = factor(clusters),
+  slope = rowMeans(Xshape[, late_idx, drop = FALSE]) - rowMeans(Xshape[, early_idx, drop = FALSE]),
+  kick = rowMeans(Xshape[, kick_idx, drop = FALSE]),
+  fast_start = rowMeans(Xshape[, start_idx, drop = FALSE]),
+  variability = apply(Xshape, 1, sd)
+)
+
+head(strategy_metrics)
+```
+
+### Reglas de decisión (heurísticas)
+
+Estas reglas usan umbrales en z-score. Son heurísticas: funcionan razonablemente, pero conviene ajustarlas si cambian el tipo de carrera, el nivel, o si quieres categorías más/menos estrictas.
+
+Lógica general:
+
+- Si el final es relativamente más rápido (kick muy negativo) y además el perfil va a más (slope < 0), etiquetamos como kick final fuerte.
+
+- Si sale muy rápido (fast_start muy negativo) pero luego se desacelera (slope > 0), etiquetamos como salida rápida y se apaga.
+
+- Si el perfil es muy estable (pendiente pequeña y baja variabilidad), lo marcamos como ritmo constante.
+
+- Si no encaja claramente, lo dejamos como estrategia mixta.
+
+```{r estrategias}
+label_strategy <- function(slope, kick, fast_start, variability) {
+
+  if (kick < -0.5 && slope < 0) {
+    return("Kick final fuerte")
+  }
+
+  if (fast_start < -0.5 && slope > 0.3) {
+    return("Salida rápida, se apaga")
+  }
+
+  if (abs(slope) < 0.2 && variability < 0.6) {
+    return("Ritmo muy constante")
+  }
+
+  if (slope > 0.5) {
+    return("Desaceleración progresiva")
+  }
+
+  if (slope < -0.5) {
+    return("Negativa progresiva")
+  }
+
+  return("Estrategia mixta")
+}
+
+strategy_metrics$label <- mapply(
+  label_strategy,
+  strategy_metrics$slope,
+  strategy_metrics$kick,
+  strategy_metrics$fast_start,
+  strategy_metrics$variability
+)
+
+strategy_metrics %>%
+  arrange(label, slope) %>%
+  print()
+```
+
+### Resumen: etiquetas por cluster
+
+Esto sirve para ver si los clusters “coinciden” con categorías de estrategia o si hay mezcla.
+
+```{r resumen3}
+strategy_metrics %>%
+  count(cluster, label) %>%
+  arrange(cluster, desc(n))
+
+saveRDS(strategy_metrics, "data/strategy_metrics.rds")
+```
+
+---

@@ -1,0 +1,394 @@
+---
+title: "Análisis Gap"
+format: html
+---
+
+## GAP respecto al lider
+
+```{r setup, include=FALSE}
+source("./data_prep.R")
+```
+
+```{r}
+library(dplyr)
+library(tidyr)
+
+split_cols <- grep("^\\d+m$", names(datos), value = TRUE)
+
+# 1) Datos a formato largo: un split por corredor y distancia
+long <- datos %>%
+  select(Competitor, all_of(split_cols)) %>%
+  pivot_longer(cols = all_of(split_cols),
+               names_to = "split",
+               values_to = "split_time") %>%
+  mutate(dist_m = as.integer(sub("m$", "", split))) %>%
+  arrange(Competitor, dist_m)
+
+# 2) Tiempo acumulado por corredor
+long <- long %>%
+  group_by(Competitor) %>%
+  mutate(cum_time = cumsum(split_time)) %>%
+  ungroup()
+
+# 3) "Cabeza de carrera": mínimo tiempo acumulado en cada distancia
+leader_cum <- long %>%
+  group_by(dist_m) %>%
+  summarise(leader_cum_time = min(cum_time, na.rm = TRUE), .groups = "drop")
+
+# 4) Velocidad del líder en ese tramo (m/s): usando el split más rápido en ese tramo
+leader_speed <- long %>%
+  group_by(dist_m) %>%
+  summarise(leader_split_time = min(split_time, na.rm = TRUE), .groups = "drop") %>%
+  mutate(v_leader = 100 / leader_split_time)
+
+# 5) Gap en tiempo y conversión a metros (aprox)
+gap_ts <- long %>%
+  left_join(leader_cum, by = "dist_m") %>%
+  left_join(leader_speed, by = "dist_m") %>%
+  mutate(
+    gap_time_sec = cum_time - leader_cum_time,
+    gap_m = gap_time_sec * v_leader
+  ) %>%
+  select(Competitor, dist_m, split_time, cum_time, gap_time_sec, gap_m) %>%
+  arrange(Competitor, dist_m)
+
+gap_ts
+```
+
+## Agrupar corredores según gap
+
+El objetivo es agrupar corredores según la dinámica del gap:
+
+- Se descuelga pronto
+
+- Se mantiene estable
+
+- Remonta
+
+- Se hunde al final
+
+- etc.
+
+## Construir matriz de series del gap
+
+Partimos de gap_ts (ya calculado antes).
+
+```{r matriz_gap}
+library(dplyr)
+library(tidyr)
+
+gap_wide <- gap_ts %>%
+  select(Competitor, dist_m, gap_m) %>%
+  pivot_wider(names_from = dist_m, values_from = gap_m) %>%
+  arrange(Competitor)
+
+competitors <- gap_wide$Competitor
+
+G <- gap_wide %>%
+  select(-Competitor) %>%
+  as.matrix()
+
+rownames(G) <- competitors
+```
+
+## Eliminar nivel absoluto (normalización por corredor)
+
+Queremos forma, no magnitud.
+Usamos z-score por fila:
+
+```{r elminiar_nivel}
+row_z <- function(v) {
+  s <- sd(v, na.rm = TRUE)
+  if (is.na(s) || s == 0) return(rep(0, length(v)))
+  (v - mean(v, na.rm = TRUE)) / s
+}
+
+Gshape <- t(apply(G, 1, row_z))
+rownames(Gshape) <- competitors
+```
+
+Ahora:
+
+- Valores positivos → gap mayor que su media.
+
+- Valores negativos → gap menor que su media.
+
+La curva describe la tendencia temporal del descolgamiento.
+
+## Clustering jerárquico sobre la forma
+
+```{r clustering_forma}
+d_gap <- dist(Gshape, method = "euclidean")
+hc_gap <- hclust(d_gap, method = "ward.D2")
+
+plot(hc_gap, main = "Clustering por forma del gap")
+```
+
+## Elegir número de clusters
+
+```{r sil_1}
+
+library(cluster)
+
+k_grid <- 2:6
+sil_gap <- sapply(k_grid, function(k) {
+  cl <- cutree(hc_gap, k = k)
+  mean(silhouette(cl, d_gap)[, 3])
+})
+
+k_best_gap <- k_grid[which.max(sil_gap)]
+k_best_gap
+
+plot(k_grid, sil_gap, type = "b",
+     xlab = "k",
+     ylab = "Silhouette media",
+     main = "Selección de k (forma del gap)")
+```
+
+También podemos elegir a mano el número de clusters.
+
+```{r clusters_a_mano}
+k_best_gap=3
+```
+
+## Asignar clusters
+
+```{r asignar_cluster}
+clusters_gap <- cutree(hc_gap, k = k_best_gap)
+
+res_gap <- data.frame(
+  Competitor = competitors,
+  cluster_gap = factor(clusters_gap)
+) %>%
+  arrange(cluster_gap)
+
+res_gap
+```
+
+## Visualizar forma media del gap por cluster
+
+```{r vis_gap}
+library(ggplot2)
+
+Gshape_df <- as.data.frame(Gshape)
+Gshape_df$Competitor <- rownames(Gshape)
+Gshape_df$cluster <- factor(clusters_gap)
+
+Gshape_long <- Gshape_df %>%
+  pivot_longer(cols = -c(Competitor, cluster),
+               names_to = "dist_m",
+               values_to = "z_gap") %>%
+  mutate(dist_m = as.numeric(dist_m))
+
+cluster_mean_gap <- Gshape_long %>%
+  group_by(cluster, dist_m) %>%
+  summarise(z_mean = mean(z_gap), .groups = "drop")
+
+ggplot(cluster_mean_gap,
+       aes(x = dist_m, y = z_mean, color = cluster)) +
+  geom_line(linewidth = 1.4) +
+  geom_point(size = 2) +
+  labs(
+    title = "Forma media de la evolución del gap",
+    subtitle = "z-score por corredor (forma, no magnitud)",
+    x = "Distancia (m)",
+    y = "z-score del gap"
+  ) +
+  theme_minimal()
+```
+
+## Interpretación
+
+Con esta normalización:
+
+- Curva creciente → el corredor se va descolgando progresivamente.
+
+- Curva decreciente → recorta distancia respecto a su media (remontador).
+
+- Curva plana → mantiene posición relativa.
+
+- Pico al final → pierde mucho al final.
+
+- Valle al final → ataque final.
+
+Este enfoque:
+
+- Agrupa por patrón temporal
+- Es independiente del nivel absoluto
+- Es comparable entre carreras
+
+Pero la distancia Euclídea penaliza desfases temporales.
+Si un corredor pierde contacto 200 m más tarde que otro, pueden parecer distintos aunque la dinámica sea similar. Si se busca algo más sofisticado para series temporales reales, la siguiente mejora sería usar DTW (Dynamic Time Warping) en lugar de dist().
+
+## Generar Etiquetas
+
+Queremos distinguir dinámicas como:
+
+🟢 Se mantiene estable
+
+🔴 Se descuelga progresivamente
+
+🔵 Remonta progresivamente
+
+🟠 Se hunde al final
+
+🟣 Ataque final
+
+⚪ Dinámica mixta
+
+
+### Calcular métricas sobre la forma media de cada cluster
+
+
+```{r metricas_cluster}
+cluster_summary_gap <- cluster_mean_gap %>%
+  group_by(cluster) %>%
+  summarise(
+    # pendiente global (últimos 500m - primeros 500m)
+    slope = mean(z_mean[dist_m >= 1100]) -
+            mean(z_mean[dist_m <= 500]),
+    
+    # comportamiento final
+    final_segment = mean(z_mean[dist_m >= 1300]),
+    
+    # comportamiento inicial
+    early_segment = mean(z_mean[dist_m <= 300]),
+    
+    # variabilidad interna del perfil
+    variability = sd(z_mean),
+    
+    .groups = "drop"
+  )
+
+cluster_summary_gap
+```
+
+### Generar etiquetas autoajustadas (percentiles relativos entre clusters)
+
+En lugar de usar números fijos, usamos cuantiles entre clusters.
+
+```{r etiquetas}
+# Umbrales relativos
+slope_pos  <- quantile(cluster_summary_gap$slope, 0.75)
+slope_neg  <- quantile(cluster_summary_gap$slope, 0.25)
+final_pos  <- quantile(cluster_summary_gap$final_segment, 0.75)
+final_neg  <- quantile(cluster_summary_gap$final_segment, 0.25)
+var_low    <- quantile(cluster_summary_gap$variability, 0.30)
+
+cluster_summary_gap <- cluster_summary_gap %>%
+  mutate(label = case_when(
+    
+    slope >= slope_pos ~ "Se descuelga progresivamente",
+    
+    slope <= slope_neg ~ "Remonta progresivamente",
+    
+    final_pos <= final_segment & slope >= 0 ~ "Colapso final",
+    
+    final_neg >= final_segment & slope <= 0 ~ "Ataque final",
+    
+    abs(slope) < median(abs(slope)) & variability <= var_low ~ "Posición estable",
+    
+    TRUE ~ "Dinámica mixta"
+  ))
+
+cluster_summary_gap
+```
+
+### Propagar etiqueta a cada corredor
+
+```{r etiq_corredores}
+res_gap_labeled <- res_gap %>%
+  left_join(
+    cluster_summary_gap %>%
+      select(cluster, label),
+    by = c("cluster_gap" = "cluster")
+  )
+
+res_gap_labeled
+saveRDS(res_gap_labeled, "data/res_gap_labeled.rds")
+
+```
+
+### Interpretación de etiquetas
+
+- Se descuelga progresivamente: Va perdiendo metros de forma sostenida.
+
+- Remonta progresivamente: Recorta metros respecto al líder a lo largo de la carrera.
+
+- Colapso final: Se mantiene razonablemente estable pero pierde mucho en los últimos 200–300m.
+
+- Ataque final: Recorta metros claramente en el tramo final.
+
+- Posición estable: Gap prácticamente constante.
+
+- Dinámica mixta: No encaja claramente en ninguno de los patrones anteriores.
+
+Estas etiquetas:
+
+-  Son relativas a la carrera concreta
+-  No usan valores arbitrarios fijos
+-  Son coherentes con el clustering
+  - Dependen del número de clusters.
+
+```{r fig_clust}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+# Aseguramos que tenemos:
+# - Gshape (matriz normalizada del gap)
+# - clusters_gap
+# - cluster_summary_gap con columna 'label'
+
+# Convertimos a formato largo
+Gshape_df <- as.data.frame(Gshape)
+Gshape_df$Competitor <- rownames(Gshape)
+Gshape_df$cluster <- factor(clusters_gap)
+
+Gshape_long <- Gshape_df %>%
+  pivot_longer(cols = -c(Competitor, cluster),
+               names_to = "dist_m",
+               values_to = "z_gap") %>%
+  mutate(dist_m = as.numeric(dist_m))
+
+# Media por cluster
+cluster_mean_gap <- Gshape_long %>%
+  group_by(cluster, dist_m) %>%
+  summarise(z_mean = mean(z_gap), .groups = "drop")
+
+# Unimos etiquetas
+cluster_labels <- cluster_summary_gap %>%
+  select(cluster, label)
+
+# Iteramos por cluster
+for (cl in levels(Gshape_long$cluster)) {
+
+  label_text <- cluster_labels$label[cluster_labels$cluster == cl]
+
+  p <- ggplot() +
+    # líneas individuales
+    geom_line(
+      data = filter(Gshape_long, cluster == cl),
+      aes(x = dist_m, y = z_gap, group = Competitor),
+      color = "grey70",
+      alpha = 0.5
+    ) +
+    # media del cluster
+    geom_line(
+      data = filter(cluster_mean_gap, cluster == cl),
+      aes(x = dist_m, y = z_mean),
+      linewidth = 1.5
+    ) +
+    labs(
+      title = paste("Cluster", cl, "-", label_text),
+      subtitle = "Forma de la evolución del gap (z-score)",
+      x = "Distancia (m)",
+      y = "z-score del gap"
+    ) +
+    theme_minimal(base_size = 13)
+
+  print(p)
+}
+```
+
+---
